@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StardewModdingAPI;
 using System.Reflection;
 
@@ -12,7 +12,7 @@ namespace CustomTransparency
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            HarmonyInstance instance = HarmonyInstance.Create(this.Helper.ModRegistry.ModID);
+            var instance = new Harmony(this.Helper.ModRegistry.ModID);
 
             if (ValidateConfig(helper.ReadConfig<ModConfig>(), out Config))
             {
