@@ -90,7 +90,7 @@ namespace BetterDoors.Framework.ContentPacks
 
                     try
                     {
-                        spriteSheet = contentPack.LoadAsset<Texture2D>(entry.Key);
+                        spriteSheet = contentPack.ModContent.Load<Texture2D>(entry.Key);
 
                         if (spriteSheet.Width % 64 != 0 || spriteSheet.Height % 48 != 0)
                         {
@@ -147,7 +147,7 @@ namespace BetterDoors.Framework.ContentPacks
 
             // Also load the vanilla door textures.
             const string vanillaPath = "LooseSprites/Cursors";
-            Texture2D vanillaTexture = this.helper.Content.Load<Texture2D>(vanillaPath, ContentSource.GameContent);
+            Texture2D vanillaTexture = this.helper.GameContent.Load<Texture2D>(vanillaPath);
 
             data.Add(new ContentPackDoor("vanilla", vanillaTexture, "light", new Point(512, 144)));
             data.Add(new ContentPackDoor("vanilla", vanillaTexture, "window", new Point(576, 144)));
