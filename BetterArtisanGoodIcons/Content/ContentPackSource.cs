@@ -17,7 +17,7 @@ namespace BetterArtisanGoodIcons.Content
 
         public override T Load<T>(string path)
         {
-            return this.pack.LoadAsset<T>(path);
+            return pack.ModContent.Load<T>(path);
         }
 
         public override IManifest GetManifest()
