@@ -6,7 +6,7 @@ using BetterDoors.Framework.Mapping;
 using BetterDoors.Framework.Multiplayer;
 using BetterDoors.Framework.Serialization;
 using BetterDoors.Framework.Utility;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -89,7 +89,7 @@ namespace BetterDoors
 
             // Apply Harmony patches.
             BetterDoorsMod.Instance = this;
-            HarmonyInstance harmony = HarmonyInstance.Create(this.Helper.ModRegistry.ModID);
+            var harmony = new Harmony(this.Helper.ModRegistry.ModID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             // Attach events.
