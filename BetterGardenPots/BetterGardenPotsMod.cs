@@ -2,7 +2,7 @@
 using BetterGardenPots.Patches.IndoorPot;
 using BetterGardenPots.Patches.Utility;
 using BetterGardenPots.Subscribers;
-using Harmony;
+using HarmonyLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -22,7 +22,7 @@ namespace BetterGardenPots
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            HarmonyInstance harmony = HarmonyInstance.Create("cat.bettergardenpots");
+            var harmony = new Harmony("cat.bettergardenpots");
 
             BetterGardenPotsModConfig config = helper.ReadConfig<BetterGardenPotsModConfig>();
 
