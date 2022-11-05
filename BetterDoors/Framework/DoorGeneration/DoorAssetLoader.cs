@@ -6,7 +6,7 @@ using System.Linq;
 namespace BetterDoors.Framework.DoorGeneration
 {
     /// <summary>Registers door tile sheets with SMAPI so maps can access them.</summary>
-    internal class DoorAssetLoader : IAssetLoader
+    internal class DoorAssetLoader
     {
         /*********
         ** Fields
@@ -16,7 +16,7 @@ namespace BetterDoors.Framework.DoorGeneration
         private readonly IDictionary<string, Texture2D> doorTextures = new Dictionary<string, Texture2D>();
 
         /// <summary>Provides an API for loading content assets.</summary>
-        private readonly IContentHelper helper;
+        private readonly IGameContentHelper helper;
 
         /*********
         ** Public methods
@@ -24,10 +24,9 @@ namespace BetterDoors.Framework.DoorGeneration
 
         /// <summary>Construct an instance.</summary>
         /// <param name="helper">Provides an API for loading content assets.</param>
-        public DoorAssetLoader(IContentHelper helper)
+        public DoorAssetLoader(IGameContentHelper helper)
         {
             this.helper = helper;
-            this.helper.AssetLoaders.Add(this);
         }
 
         /// <summary>Add textures to be loaded.</summary>
@@ -42,16 +41,16 @@ namespace BetterDoors.Framework.DoorGeneration
 
         /// <summary>Get whether this instance can load the initial version of the given asset.</summary>
         /// <param name="asset">Basic metadata about the asset being loaded.</param>
-        public bool CanLoad<T>(IAssetInfo asset)
+        public bool CanLoad(IAssetName assetName)
         {
-            return this.doorTextures.Keys.Any(asset.AssetNameEquals);
+            return this.doorTextures.Keys.Any(key => assetName.IsEquivalentTo(key));
         }
 
         /// <summary>Load a matched asset.</summary>
         /// <param name="asset">Basic metadata about the asset being loaded.</param>
-        public T Load<T>(IAssetInfo asset)
+        public Texture2D Load(IAssetName asset)
         {
-            return (T)(object)this.doorTextures[asset.AssetName];
+            return this.doorTextures[asset.Name];
         }
 
         /// <summary>Reset the asset loader, clearing loaded textures.</summary>
@@ -71,7 +70,7 @@ namespace BetterDoors.Framework.DoorGeneration
         /// <param name="textures">The textures to invalidate.</param>
         private void InvalidateCache(IDictionary<string, Texture2D> textures)
         {
-            this.helper.InvalidateCache(asset => asset.DataType == typeof(Texture2D) && textures.Keys.Any(asset.AssetNameEquals));
+            this.helper.InvalidateCache(asset => asset.DataType == typeof(Texture2D) && textures.Keys.Any(key => asset.Name.IsEquivalentTo(key)));
         }
     }
 }

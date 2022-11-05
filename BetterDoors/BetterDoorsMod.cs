@@ -83,7 +83,7 @@ namespace BetterDoors
             this.doorTileInfoManager = new GeneratedDoorTileInfoManager();
             this.generator = new DoorSpriteGenerator(this.doorTileInfoManager, packLoader.LoadContentPacks(), this.Helper.Multiplayer.ModID, this.Monitor, Game1.graphics.GraphicsDevice);
             this.creator = new DoorCreator(this.doorTileInfoManager, this.timer, errorQueue, this.Helper.ModRegistry.Get(this.Helper.ModRegistry.ModID).Manifest.Version);
-            this.assetLoader = new DoorAssetLoader(this.Helper.Content);
+            this.assetLoader = new DoorAssetLoader(this.Helper.GameContent);
             this.mapTileSheetManager = new MapTileSheetManager();
             this.manager = new DoorManager(this.config, this.OnDoorToggled);
 
@@ -116,6 +116,7 @@ namespace BetterDoors
             this.Helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
             this.Helper.Events.Player.Warped += this.Player_Warped;
             this.Helper.Events.Multiplayer.ModMessageReceived += this.Multiplayer_ModMessageReceived;
+            this.Helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
 
         /// <summary>Disables the mod, removing the attached event handlers.</summary>
@@ -270,6 +271,15 @@ namespace BetterDoors
                 if (Context.IsMainPlayer || toggle.LocationName == Utils.GetLocationName(Game1.currentLocation))
                     this.manager.ToggleDoor(toggle.LocationName, toggle.Position, toggle.StateBeforeToggle);
             }
+        }
+
+        /// <summary>Loads assets needed for doors.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (this.assetLoader.CanLoad(e.Name))
+                e.LoadFrom(() => this.assetLoader.Load(e.Name), AssetLoadPriority.Medium);
         }
 
         /// <summary>Action to take when a door is toggled.</summary>
