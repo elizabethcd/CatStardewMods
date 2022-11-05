@@ -1,7 +1,7 @@
 ﻿using BetterFruitTrees.Patches;
 using BetterFruitTrees.Patches.JunimoHarvester;
 using BetterFruitTrees.Patches.JunimoHut;
-using Harmony;
+using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -39,7 +39,7 @@ namespace BetterFruitTrees
 
             new GrowHelper(helper.Events);
 
-            HarmonyInstance harmony = HarmonyInstance.Create("cat.betterfruittrees");
+            var harmony = new Harmony("cat.betterfruittrees");
 
             Utils.HarvestThreeAtOnce = this.Config.Wait_To_Harvest_Fruit_Trees_Until_They_Have_Three_Fruits__Then_Harvest_All_Three_At_Once;
 
