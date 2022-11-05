@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetterArtisanGoodIcons", "BetterArtisanGoodIcons\BetterArtisanGoodIcons.csproj", "{F4AC84CC-F578-4553-8DE1-EC9F851D3700}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterArtisanGoodIcons", "BetterArtisanGoodIcons\BetterArtisanGoodIcons.csproj", "{F4AC84CC-F578-4553-8DE1-EC9F851D3700}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetterDoors", "BetterDoors\BetterDoors.csproj", "{B0C1C09B-830E-456A-B052-3B60EB38607E}"
 EndProject
@@ -21,8 +21,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HatsOnCats", "HatsOnCats\HatsOnCats.csproj", "{0EA8E985-1BD6-4BA8-B3A3-A751186FB798}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetterWorkbenches", "BetterWorkbenches\BetterWorkbenches.csproj", "{359174FF-E351-4B83-9825-7EC16E9190E9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BobberDistance", "BobberDistance\BobberDistance.csproj", "{D9A78F16-4826-43E5-A2B5-0001F0637F45}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloweryTools", "FloweryTools\FloweryTools.csproj", "{A65A9570-E318-4546-BAD0-60E953722590}"
 EndProject
@@ -76,6 +74,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackEverything", "StackEve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinterGrass", "WinterGrass\WinterGrass.csproj", "{D398FB84-4701-4B65-AABC-C0F848BC3BBE}"
 EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "BobberDistance", "BobberDistance\BobberDistance.csproj", "{82BE5CA2-5380-4A18-AE4F-18C4165BF1AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,10 +106,6 @@ Global
 		{359174FF-E351-4B83-9825-7EC16E9190E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{359174FF-E351-4B83-9825-7EC16E9190E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{359174FF-E351-4B83-9825-7EC16E9190E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9A78F16-4826-43E5-A2B5-0001F0637F45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9A78F16-4826-43E5-A2B5-0001F0637F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9A78F16-4826-43E5-A2B5-0001F0637F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9A78F16-4826-43E5-A2B5-0001F0637F45}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A65A9570-E318-4546-BAD0-60E953722590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A65A9570-E318-4546-BAD0-60E953722590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A65A9570-E318-4546-BAD0-60E953722590}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -214,6 +210,10 @@ Global
 		{D398FB84-4701-4B65-AABC-C0F848BC3BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D398FB84-4701-4B65-AABC-C0F848BC3BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D398FB84-4701-4B65-AABC-C0F848BC3BBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82BE5CA2-5380-4A18-AE4F-18C4165BF1AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82BE5CA2-5380-4A18-AE4F-18C4165BF1AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82BE5CA2-5380-4A18-AE4F-18C4165BF1AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82BE5CA2-5380-4A18-AE4F-18C4165BF1AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
