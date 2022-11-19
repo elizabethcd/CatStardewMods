@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StardewModdingAPI;
 using System.Reflection;
 
@@ -10,7 +10,7 @@ namespace CasksEverywhere
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            HarmonyInstance instance = HarmonyInstance.Create(helper.ModRegistry.ModID);
+            var instance = new Harmony(helper.ModRegistry.ModID);
 
             instance.PatchAll(Assembly.GetExecutingAssembly());
         }
