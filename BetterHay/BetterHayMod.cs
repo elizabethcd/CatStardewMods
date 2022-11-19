@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -40,7 +40,7 @@ namespace BetterHay
 
             if (Config.EnableTakingHayFromHoppersAnytime)
             {
-                HarmonyInstance harmony = HarmonyInstance.Create(helper.ModRegistry.ModID);
+                var harmony = new Harmony(helper.ModRegistry.ModID);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
             }
         }
