@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StardewModdingAPI;
 using System.Reflection;
 
@@ -11,7 +11,7 @@ namespace BetterWorkbenches
             // Do reflection in the entry method to crash when the mod is loaded rather than do nothing when workbenches are clicked (i.e. fail fast to know the mod needs updates)
             WorkbenchPatch.GetTypes();
 
-            HarmonyInstance harmony = HarmonyInstance.Create(helper.ModRegistry.ModID);
+            var harmony = new Harmony(helper.ModRegistry.ModID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
