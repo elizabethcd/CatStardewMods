@@ -27,7 +27,7 @@ namespace CopyInviteCode
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            this.clipboardTexture = helper.Content.Load<Texture2D>("assets/clipboard.png");
+            this.clipboardTexture = helper.ModContent.Load<Texture2D>("assets/clipboard.png");
             this.clipboardItem = new ClipboardItem(this.clipboardTexture);
 
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
