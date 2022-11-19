@@ -1,6 +1,6 @@
 ﻿using BetterSlingshots.Framework.Config;
 using BetterSlingshots.Framework.Patches;
-using Harmony;
+using HarmonyLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -43,7 +43,7 @@ namespace BetterSlingshots
             this.Config = new ConfigManager(this.Helper).GetConfig();
             BetterSlingshotsMod.Instance = this;
 
-            HarmonyInstance harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
+            var harmony = new Harmony(this.ModManifest.UniqueID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             helper.Events.Display.MenuChanged += this.Display_MenuChanged;
