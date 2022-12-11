@@ -1,5 +1,5 @@
 ﻿using System;
-using Harmony;
+using HarmonyLib;
 using SafeLightning.CommandParsing;
 using StardewModdingAPI;
 using System.Reflection;
@@ -24,7 +24,7 @@ namespace SafeLightning
             CommandParser commandParser = new CommandParser(this.Monitor, this.Helper.ConsoleCommands);
             commandParser.RegisterCommands();
 
-            HarmonyInstance instance = HarmonyInstance.Create(this.Helper.ModRegistry.ModID);
+            var instance = new Harmony(this.Helper.ModRegistry.ModID);
             instance.PatchAll(Assembly.GetExecutingAssembly());
         }
 
