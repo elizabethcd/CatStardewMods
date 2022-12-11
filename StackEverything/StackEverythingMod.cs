@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StackEverything.ObjectCopiers;
 using StackEverything.Patches;
 using StackEverything.Patches.Size;
@@ -29,7 +29,7 @@ namespace StackEverything
         public override void Entry(IModHelper helper)
         {
             this.lastKnownFurniture = new List<Furniture>();
-            HarmonyInstance harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
+            var harmony = new Harmony(this.ModManifest.UniqueID);
 
             //This only works if the class' Item.Stack property is not overriden to get {1}, set {}
             //Which means boots, hats, rings, and special items can't be stacked.
@@ -91,7 +91,7 @@ namespace StackEverything
         /// <param name="originalType">The type of the original method to patch.</param>
         /// <param name="originalSearch">How to search for the original method.</param>
         /// <param name="patchType">The type holding the patches.</param>
-        private void Patch(HarmonyInstance harmony, string originalName, Type originalType, BindingFlags originalSearch, Type patchType)
+        private void Patch(Harmony harmony, string originalName, Type originalType, BindingFlags originalSearch, Type patchType)
         {
             if (originalType == null)
             {
