@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -39,7 +39,7 @@ namespace WinterGrass
 
             this.legacySaveConverter = new LegacySaveConverter(this.Helper.DirectoryPath);
 
-            HarmonyInstance harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
+            var harmony = new Harmony(this.ModManifest.UniqueID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
