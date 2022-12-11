@@ -60,7 +60,7 @@ namespace RangeDisplay
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            this.displayManager = new DisplayManager(helper.Content.Load<Texture2D>("assets/border.png"), helper.Content.Load<Texture2D>("assets/filled_in.png"),
+            this.displayManager = new DisplayManager(helper.ModContent.Load<Texture2D>("assets/border.png"), helper.ModContent.Load<Texture2D>("assets/filled_in.png"),
                 new Dictionary<RangeItem, Color>
                 {
                     {RangeItem.Sprinkler, Color.LightSkyBlue},
