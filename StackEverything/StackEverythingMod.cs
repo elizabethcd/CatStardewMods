@@ -68,7 +68,7 @@ namespace StackEverything
             //fix furniture pickup in decoratable locations and item placement putting down the whole furniture stack
             IDictionary<string, Tuple<Type, Type>> otherReplacements = new Dictionary<string, Tuple<Type, Type>>()
             {
-                {"removeQueuedFurniture", new Tuple<Type, Type>(typeof(DecoratableLocation), typeof(RemoveQueuedFurniturePatch))},
+                {"removeQueuedFurniture", new Tuple<Type, Type>(typeof(GameLocation), typeof(RemoveQueuedFurniturePatch))},
                 {nameof(Utility.tryToPlaceItem), new Tuple<Type, Type>(typeof(Utility), typeof(TryToPlaceItemPatch))},
                 {"doDoneFishing", new Tuple<Type, Type>(typeof(FishingRod), typeof(DoDoneFishingPatch))},
                 {nameof(Item.canStackWith), new Tuple<Type, Type>(typeof(Item), typeof(CanStackWithPatch))}

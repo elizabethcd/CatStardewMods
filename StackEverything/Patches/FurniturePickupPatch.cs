@@ -8,13 +8,13 @@ namespace StackEverything.Patches
     /// <summary>Pick up furniture correctly instead of overwriting items in the player's inventory.</summary>
     internal class RemoveQueuedFurniturePatch
     {
-        public static bool Prefix(DecoratableLocation __instance, Guid guid)
+        public static bool Prefix(GameLocation __instance, Guid guid)
         {
             removeQueuedFurniture(__instance, guid);
             return false;
         }
 
-        private static void removeQueuedFurniture(DecoratableLocation instance, Guid guid)
+        private static void removeQueuedFurniture(GameLocation instance, Guid guid)
         {
             Farmer player = Game1.player;
             if (!instance.furniture.ContainsGuid(guid))
