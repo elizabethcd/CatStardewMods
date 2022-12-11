@@ -2,7 +2,7 @@
 using StardewValley.Characters;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 
 namespace RemovableHorseHats
 {

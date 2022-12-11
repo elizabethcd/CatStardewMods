@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
@@ -44,7 +44,7 @@ namespace RemovableHorseHats
             helper.Events.Input.ButtonReleased += this.OnButtonReleased;
 
             ModEntry.Instance = this;
-            HarmonyInstance harmony = HarmonyInstance.Create(this.Helper.ModRegistry.ModID);
+            var harmony = new Harmony(this.Helper.ModRegistry.ModID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
