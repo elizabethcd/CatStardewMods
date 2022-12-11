@@ -15,7 +15,7 @@ namespace NoCrows
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            var harmony = new Harmony(this.Helper.DirectoryPath);
+            var harmony = new Harmony(this.Helper.ModRegistry.ModID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
