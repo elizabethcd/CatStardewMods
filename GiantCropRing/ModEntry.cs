@@ -29,7 +29,7 @@ namespace GiantCropRing
             helper.Events.GameLoop.TimeChanged += this.OnTimeChanged;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             this.config = helper.ReadConfig<ModConfig>();
-            this.giantRingTexture = this.Helper.Content.Load<Texture2D>("assets/ring.png");
+            this.giantRingTexture = this.Helper.ModContent.Load<Texture2D>("assets/ring.png");
 
             GiantRing.texture = this.giantRingTexture;
             GiantRing.price = this.config.cropRingPrice / 2;
