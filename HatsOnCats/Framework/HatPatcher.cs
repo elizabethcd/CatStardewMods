@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -12,12 +12,12 @@ namespace HatsOnCats.Framework
 {
     internal class HatPatcher
     {
-        private readonly HarmonyInstance harmony;
+        private readonly Harmony harmony;
         private readonly IMonitor monitor;
 
         private static Character current;
 
-        public HatPatcher(IMonitor monitor, HarmonyInstance harmony)
+        public HatPatcher(IMonitor monitor, Harmony harmony)
         {
             this.monitor = monitor;
             this.harmony = harmony;

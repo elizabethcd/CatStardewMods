@@ -1,5 +1,5 @@
 ﻿using System;
-using Harmony;
+using HarmonyLib;
 using HatsOnCats.Framework;
 using HatsOnCats.Framework.Interfaces;
 using Microsoft.Xna.Framework.Graphics;
@@ -122,7 +122,7 @@ namespace HatsOnCats
 
         private void PatchDrawMethods()
         {
-            HatPatcher patcher = new HatPatcher(this.Monitor, HarmonyInstance.Create(this.Helper.ModRegistry.ModID));
+            HatPatcher patcher = new HatPatcher(this.Monitor, new Harmony(this.Helper.ModRegistry.ModID));
             patcher.Patch(typeof(Game1).Assembly.GetTypes().Where(type => typeof(Character).IsAssignableFrom(type)));
         }
         
