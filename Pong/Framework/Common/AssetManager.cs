@@ -12,8 +12,8 @@ namespace Pong.Framework.Common
         {
             try
             {
-                SquareTexture = helper.Content.Load<Texture2D>("assets/square.png");
-                CircleTexture = helper.Content.Load<Texture2D>("assets/circle.png");
+                SquareTexture = helper.ModContent.Load<Texture2D>("assets/square.png");
+                CircleTexture = helper.ModContent.Load<Texture2D>("assets/circle.png");
 
                 return true;
             }
