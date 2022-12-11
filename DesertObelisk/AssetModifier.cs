@@ -57,14 +57,14 @@ namespace DesertObelisk
                     monitor.Log(
                         "No valid content pack was found but Starblue Valley is installed, using Starblue obelisk texture.",
                         LogLevel.Trace);
-                    this.obeliskTexture = helper.Content.Load<Texture2D>("assets/Desert Obelisk Starblue.png");
+                    this.obeliskTexture = helper.ModContent.Load<Texture2D>("assets/Desert Obelisk Starblue.png");
                 }
                 else
                 {
                     monitor.Log(
                         "Loaded default obelisk texture because no content packs or Starblue Valley were found/valid.",
                         LogLevel.Trace);
-                    this.obeliskTexture = helper.Content.Load<Texture2D>("assets/Desert Obelisk.png");
+                    this.obeliskTexture = helper.ModContent.Load<Texture2D>("assets/Desert Obelisk.png");
                 }
             }
 
@@ -76,12 +76,12 @@ namespace DesertObelisk
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            return asset.AssetNameEquals(@"Data\Blueprints");
+            return asset.NameWithoutLocale.IsEquivalentTo(@"Data\Blueprints");
         }
 
         public void Edit<T>(IAssetData asset)
         {
-            if (asset.AssetNameEquals(@"Data\Blueprints"))
+            if (asset.NameWithoutLocale.IsEquivalentTo(@"Data\Blueprints"))
                 asset.AsDictionary<string, string>().Data.Add("Desert Obelisk",
                     "337 10 768 10/3/3/-1/-1/-2/-1/null/Desert Obelisk/Warps you to the desert./Buildings/none/48/128/-1/null/Farm/1000000/true");
         }
