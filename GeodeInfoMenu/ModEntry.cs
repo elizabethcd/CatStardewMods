@@ -42,7 +42,7 @@ namespace GeodeInfoMenu
             this.geodes = new Dictionary<GeodeType, int> {
                 {GeodeType.Normal, 535}, {GeodeType.FrozenGeode, 536}, {GeodeType.MagmaGeode, 537}, {GeodeType.OmniGeode, 749}, {GeodeType.ArtifactTrove, 275}
             };
-            GeodeMenu.tabIcons = helper.Content.Load<Texture2D>("Sprites/tabs.png");
+            GeodeMenu.tabIcons = helper.ModContent.Load<Texture2D>("Sprites/tabs.png");
 
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
