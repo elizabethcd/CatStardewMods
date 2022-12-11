@@ -80,15 +80,23 @@ namespace HatsOnCats.Framework
 
         private void PatchDraw(Type t, MethodInfo original, MethodInfo patch, bool prefix=true)
         {
-            this.monitor.Log($"Patching {t.Name}.{original.Name} with {(prefix ? "prefix":"postfix")} {typeof(HatPatcher).Name}.{patch.Name}", LogLevel.Trace);
-            if (prefix)
+            try
             {
-                this.harmony.Patch(original, prefix: new HarmonyMethod(patch));
+                this.monitor.Log($"Patching {t.Name}.{original.Name} with {(prefix ? "prefix" : "postfix")} {typeof(HatPatcher).Name}.{patch.Name}", LogLevel.Trace);
+                if (prefix)
+                {
+                    this.harmony.Patch(original, prefix: new HarmonyMethod(patch));
+                }
+                else
+                {
+                    this.harmony.Patch(original, postfix: new HarmonyMethod(patch));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                this.harmony.Patch(original, postfix: new HarmonyMethod(patch));
+                this.monitor.Log($"Failed to patch {t.Name}.{original.Name} with {(prefix ? "prefix" : "postfix")} {typeof(HatPatcher).Name}.{patch.Name} with exception {ex}", LogLevel.Trace);
             }
+            
         }
     }
 }
