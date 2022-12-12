@@ -42,8 +42,8 @@ namespace ModUpdateMenu.Updates
             if (!File.Exists(updateMarker))
                 return Constants.ApiVersion;
 
-            //If there is an update marker, there is a SMAPI update
-            string rawUpdate = File.ReadAllText(updateMarker);
+            //If there is an update marker, there is a SMAPI update — make sure to parse correctly for the format SMAPI uses
+            string rawUpdate = File.ReadAllText(updateMarker).Split('|')[0];
 
             return SemanticVersion.TryParse(rawUpdate, out ISemanticVersion updateFound) ? updateFound : null;
         }

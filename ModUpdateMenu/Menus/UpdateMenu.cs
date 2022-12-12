@@ -187,7 +187,12 @@ namespace ModUpdateMenu.Menus
             {
                 try
                 {
-                    Process.Start("https://smapi.io");
+                    var ps = new ProcessStartInfo("https://smapi.io")
+                    {
+                        UseShellExecute = true,
+                        Verb = "open"
+                    };
+                    Process.Start(ps);
                 }
                 catch
                 {
@@ -387,7 +392,12 @@ namespace ModUpdateMenu.Menus
                 if (which.UpdateURLType != "???")
                     try
                     {
-                        Process.Start(which.UpdateURL);
+                        var ps = new ProcessStartInfo(which.UpdateURL)
+                        {
+                            UseShellExecute = true,
+                            Verb = "open"
+                        };
+                        Process.Start(ps);
                     }
                     catch
                     {
