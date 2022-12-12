@@ -59,22 +59,26 @@ namespace HatsOnCats.Framework
 
             MethodInfo original = t.GetMethod(name, new[] { typeof(SpriteBatch) });
             MethodInfo prefix = this.GetType().GetMethod(nameof(this.CharacterDrawPatch), BindingFlags.NonPublic | BindingFlags.Static);
-            this.PatchDraw(t, original, prefix);
+            if (original != null && original.DeclaringType == t)
+                this.PatchDraw(t, original, prefix);
 
             original = t.GetMethod(name, new[] { typeof(SpriteBatch), typeof(float) });
-            this.PatchDraw(t, original, prefix);
-        
+            if (original != null && original.DeclaringType == t)
+                this.PatchDraw(t, original, prefix);
 
             original = t.GetMethod(name, new[] { typeof(SpriteBatch), typeof(int), typeof(float) });
-            this.PatchDraw(t, original, prefix);
+            if (original != null && original.DeclaringType == t)
+                this.PatchDraw(t, original, prefix);
 
             original = t.GetMethod(nameof(Character.drawAboveAlwaysFrontLayer), new[] { typeof(SpriteBatch)});
-            this.PatchDraw(t, original, prefix);
+            if (original != null && original.DeclaringType == t)
+                this.PatchDraw(t, original, prefix);
 
             if (typeof(Monster).IsAssignableFrom(t))
             {
                 original = t.GetMethod(nameof(Monster.drawAboveAllLayers), new[] { typeof(SpriteBatch) });
-                this.PatchDraw(t, original, prefix);
+                if (original != null && original.DeclaringType == t)
+                    this.PatchDraw(t, original, prefix);
             }
         }
 
