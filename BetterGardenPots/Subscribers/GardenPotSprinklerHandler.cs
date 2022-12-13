@@ -101,7 +101,7 @@ namespace BetterGardenPots.Subscribers
                 yield break;
 
             foreach (KeyValuePair<Vector2, SObject> item in location.Objects.Pairs)
-                if (item.Value.Name.ToLower().Contains("sprinkler"))
+                if (item.Value.IsSprinkler())
                     foreach (Vector2 pos in this.GetRange(item.Value, item.Key))
                         yield return pos;
         }
@@ -115,7 +115,7 @@ namespace BetterGardenPots.Subscribers
             {
                 if (this.betterSprinklersAPI == null)
                 {
-                    foreach (Vector2 pos in this.GetDefaultRange(obj, position))
+                    foreach (Vector2 pos in obj.GetSprinklerTiles())
                         yield return pos;
                 }
                 else if (this.betterSprinklersAPI.GetSprinklerCoverage().TryGetValue(obj.ParentSheetIndex, out Vector2[] bExtra))
@@ -125,38 +125,6 @@ namespace BetterGardenPots.Subscribers
                 if (this.simpleSprinklersAPI != null && this.simpleSprinklersAPI.GetNewSprinklerCoverage().TryGetValue(obj.ParentSheetIndex, out Vector2[] sExtra))
                     foreach (Vector2 extraPos in sExtra)
                         yield return extraPos + position;
-            }
-        }
-
-        public IEnumerable<Vector2> GetDefaultRange(SObject obj, Vector2 position)
-        {
-            string objectName = obj.Name.ToLower();
-
-            yield return new Vector2(position.X - 1, position.Y);
-            yield return new Vector2(position.X + 1, position.Y);
-            yield return new Vector2(position.X, position.Y - 1);
-            yield return new Vector2(position.X, position.Y + 1);
-
-            if (objectName.Contains("quality") || objectName.Contains("iridium"))
-            {
-                yield return new Vector2(position.X - 1, position.Y - 1);
-                yield return new Vector2(position.X + 1, position.Y - 1);
-                yield return new Vector2(position.X - 1, position.Y + 1);
-                yield return new Vector2(position.X + 1, position.Y + 1);
-
-                if (objectName.Contains("iridium"))
-                {
-                    for (int i = -2; i < 3; i++)
-                    {
-                        for (int j = -2; j < 3; j++)
-                        {
-                            if (Math.Abs(i) == 2 || Math.Abs(j) == 2)
-                            {
-                                yield return new Vector2(position.X + i, position.Y + j);
-                            }
-                        }
-                    }
-                }
             }
         }
     }
