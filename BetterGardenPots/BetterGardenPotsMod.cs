@@ -3,6 +3,7 @@ using BetterGardenPots.Patches.IndoorPot;
 using BetterGardenPots.Patches.Utility;
 using BetterGardenPots.Subscribers;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -32,9 +33,6 @@ namespace BetterGardenPots
 
             IList<Tuple<string, Type, Type>> replacements = new List<Tuple<string, Type, Type>>();
 
-            if (config.MakeBeeHousesNoticeFlowersInGardenPots)
-                replacements.Add(nameof(Utility.findCloseFlower), typeof(Utility), typeof(FindCloseFlowerPatch));
-
             if (config.HarvestMatureCropsWhenGardenPotBreaks)
                 replacements.Add(nameof(IndoorPot.performToolAction), indoorPotType, typeof(PerformToolActionPatch));
 
@@ -55,6 +53,15 @@ namespace BetterGardenPots
                 MethodInfo postfix = replacement.Item3.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(item => item.Name == "Postfix");
 
                 harmony.Patch(original, prefix == null ? null : new HarmonyMethod(prefix), postfix == null ? null : new HarmonyMethod(postfix));
+            }
+
+            // Patch the beehouse function seperately to get the right overload out of it
+            if (config.MakeBeeHousesNoticeFlowersInGardenPots)
+            {
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(Utility), nameof(Utility.findCloseFlower), new Type[] { typeof(GameLocation), typeof(Vector2), typeof(int), typeof(Func<Crop, bool>) }),
+                    prefix: new HarmonyMethod(typeof(FindCloseFlowerPatch), nameof(FindCloseFlowerPatch.Prefix))
+                );
             }
 
             helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
