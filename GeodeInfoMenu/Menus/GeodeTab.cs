@@ -25,7 +25,7 @@ namespace GeodeInfoMenu
         private readonly ClickableTextureComponent scrollBar;
         private bool scrolling;
         private Rectangle scrollBarRunner;
-        private const int NUM_ITEMS = 6;
+        private const int NUM_ITEMS = 7;
 
         /***
          * New Fields

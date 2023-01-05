@@ -105,6 +105,15 @@ namespace GeodeInfoMenu
                 fullyImmutable = true
             });
             this.pages.Add((IClickableMenu)new GeodeTab("artifact trove", items[4], this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height));
+            this.tabs.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 7, this.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + Game1.tileSize, Game1.tileSize, Game1.tileSize), "coco", "Golden Coconut")
+            {
+                myID = 15966,
+                downNeighborID = 6,
+                leftNeighborID = 15965,
+                tryDefaultIfNoDownNeighborExists = true,
+                fullyImmutable = true
+            });
+            this.pages.Add((IClickableMenu)new GeodeTab("golden coconut", items[5], this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height));
 
             if (Game1.activeClickableMenu == null)
                 Game1.playSound("bigSelect");
@@ -192,6 +201,9 @@ namespace GeodeInfoMenu
                 case 4:
                     return Game1.content.LoadString("Omni Geode");
 
+                case 5:
+                    return Game1.content.LoadString("Golden Coconut");
+
                 default:
                     return "";
             }
@@ -218,6 +230,9 @@ namespace GeodeInfoMenu
 
                 case "trove":
                     return 5;
+
+                case "coco":
+                    return 6;
 
                 default:
                     throw new ArgumentException($"Unknown name ${name}");

@@ -32,6 +32,9 @@ namespace GeodeInfoMenu
         /// <summary>The menu where players actually break geodes.</summary>
         private StardewValley.Menus.IClickableMenu geodeBreakingMenu;
 
+        /// <summary>The hardcoded golden coconut drops</summary>
+        private string[] cocoDrops = new string[] { "69", "835", "833", "831", "820", "292", "386", "791" };
+
         /// <summary>Entry method. Sets up config and event listeners.</summary>
         /// <param name="helper">Mod helper to read config and load sprites.</param>
         public override void Entry(IModHelper helper)
@@ -40,7 +43,7 @@ namespace GeodeInfoMenu
             this.config.NumberOfNextGeodeDropsToShow = this.config.NumberOfNextGeodeDropsToShow < 0 ? 0 : this.config.NumberOfNextGeodeDropsToShow;
             this.config.NumberOfNextGeodeDropsToShow = this.config.NumberOfNextGeodeDropsToShow > 999 ? 9 : this.config.NumberOfNextGeodeDropsToShow;
             this.geodes = new Dictionary<GeodeType, int> {
-                {GeodeType.Normal, 535}, {GeodeType.FrozenGeode, 536}, {GeodeType.MagmaGeode, 537}, {GeodeType.OmniGeode, 749}, {GeodeType.ArtifactTrove, 275}
+                {GeodeType.Normal, 535}, {GeodeType.FrozenGeode, 536}, {GeodeType.MagmaGeode, 537}, {GeodeType.OmniGeode, 749}, {GeodeType.ArtifactTrove, 275}, {GeodeType.GoldenCoconut, 791}
             };
             GeodeMenu.tabIcons = helper.ModContent.Load<Texture2D>("Sprites/tabs.png");
 
@@ -178,38 +181,38 @@ namespace GeodeInfoMenu
                 switch (item.HardCodedDrop)
                 {
                     case HardCodedGeodeDrop.EarthCrystal:
-                        return new bool[] { true, false, false, false, false };
+                        return new bool[] { true, false, false, false, false, false };
 
                     case HardCodedGeodeDrop.FrozenTear:
-                        return new bool[] { false, true, false, false, false };
+                        return new bool[] { false, true, false, false, false, false };
 
                     case HardCodedGeodeDrop.FireQuartz:
-                        return new bool[] { false, false, true, true, false };
+                        return new bool[] { false, false, true, true, false, false };
 
                     case HardCodedGeodeDrop.Stone:
                     case HardCodedGeodeDrop.Clay:
                     case HardCodedGeodeDrop.CopperOre:
                     case HardCodedGeodeDrop.Coal:
-                        return new bool[] { true, true, true, true, false };
+                        return new bool[] { true, true, true, true, false, false };
 
                     case HardCodedGeodeDrop.IronOre:
-                        return new bool[] { Game1.player.deepestMineLevel > 25, true, true, true, false };
+                        return new bool[] { Game1.player.deepestMineLevel > 25, true, true, true, false, false };
 
                     case HardCodedGeodeDrop.GoldOre:
-                        return new bool[] { false, Game1.player.deepestMineLevel > 75, true, true, false };
+                        return new bool[] { false, Game1.player.deepestMineLevel > 75, true, true, false, false };
 
                     case HardCodedGeodeDrop.IridiumOre:
-                        return new bool[] { false, false, true, true, false };
+                        return new bool[] { false, false, true, true, false, true };
 
                     case HardCodedGeodeDrop.PrismaticShard:
-                        return new bool[] { false, false, false, true, false };
+                        return new bool[] { false, false, false, true, false, false };
 
                     default:
                         return null;
                 }
             else
             {
-                bool[] acceptable = new bool[] { false, false, false, false, false };
+                bool[] acceptable = new bool[] { false, false, false, false, false, false };
                 GeodeType[] types = this.GetGeodeTypes();
                 for (int i = 0; i < types.Length; i++)
                     foreach (int drop in this.GetDropsFromGeode(types[i]))
@@ -232,14 +235,24 @@ namespace GeodeInfoMenu
                 GeodeDrop geodeDrop = new GeodeDrop(item);
                 mapping.Add(Game1.objectInformation[geodeDrop.ParentSheetIndex].Split('/')[0].ToLower(), geodeDrop);
             }
+
             foreach (GeodeType type in this.GetGeodeTypes())
             {
-                foreach (string drop in Game1.objectInformation[this.geodes[type]].Split('/')[6].Split(' '))
-                {
-                    string name = Game1.objectInformation[Convert.ToInt32(drop)].Split('/')[0].ToLower();
-                    if (!mapping.ContainsKey(name))
-                        mapping.Add(name, new GeodeDrop(Convert.ToInt32(drop)));
-                }
+                if (type == GeodeType.GoldenCoconut)                    
+                    foreach (string drop in cocoDrops)
+                    {
+                        string name = Game1.objectInformation[Convert.ToInt32(drop)].Split('/')[0].ToLower();
+                        if (!mapping.ContainsKey(name))
+                            mapping.Add(name, new GeodeDrop(Convert.ToInt32(drop)));
+                    }
+                else {
+                    foreach (string drop in Game1.objectInformation[this.geodes[type]].Split('/')[6].Split(' '))
+                    {
+                        string name = Game1.objectInformation[Convert.ToInt32(drop)].Split('/')[0].ToLower();
+                        if (!mapping.ContainsKey(name))
+                            mapping.Add(name, new GeodeDrop(Convert.ToInt32(drop)));
+                    }
+                }                
             }
             return mapping;
         }
@@ -249,6 +262,8 @@ namespace GeodeInfoMenu
         /// <returns>An integer array of item ids</returns>
         private int[] GetDropsFromGeode(GeodeType type)
         {
+            if (type == GeodeType.GoldenCoconut)
+                return Array.ConvertAll(cocoDrops, int.Parse);
             return Array.ConvertAll(Game1.objectInformation[this.geodes[type]].Split('/')[6].Split(' '), int.Parse);
         }
 
@@ -267,6 +282,8 @@ namespace GeodeInfoMenu
                 for (int i = 0; i < amount; i++)
                 {
                     items[i] = this.GeodeSimulator(this.geodes[type], GeodesCracked++);
+                    if (type == GeodeType.GoldenCoconut && !Game1.netWorldState.Value.GoldenCoconutCracked.Value && i == 0)
+                        items[i] = 73;
                     stars[i] = this.HasNotDonatedItemToMuseum(items[i]);
                 }
                 list.Add(new Tuple<int[], bool[]>(items, stars));
@@ -316,6 +333,39 @@ namespace GeodeInfoMenu
                 int num2 = random.Next(1, 10);
                 for (int index = 0; index < num2; ++index)
                     random.NextDouble();
+
+                // Qi bean check
+                if (random.NextDouble() <= 0.1 && Game1.player.team.SpecialOrderRuleActive("DROP_QI_BEANS"))
+                {
+                    bool five = random.NextDouble() < 0.25;
+                    return 890;//Qi Bean
+                }
+
+                // Golden coconut checks
+                if (parentSheetIndex == 791)
+                {
+                    if (random.NextDouble() < 0.05 && !Game1.player.hasOrWillReceiveMail("goldenCoconutHat"))
+                    {
+                        return 791;//Golden coconut as stand-in for the golden coconut hat
+                    }
+                    switch (random.Next(7))
+                    {
+                        case 0:
+                            return 69;//Banana sapling
+                        case 1:
+                            return 835;//Mango sapling
+                        case 2:
+                            return 833;//Pineapple seeds
+                        case 3:
+                            return 831;//Taro tubers
+                        case 4:
+                            return 820;//Mammal skull
+                        case 5:
+                            return 292;//Mahogany seeds
+                        case 6:
+                            return 386;//Iridium ore
+                    }
+                }
 
                 if (parentSheetIndex != 275 && random.NextDouble() < 0.5)
                 {

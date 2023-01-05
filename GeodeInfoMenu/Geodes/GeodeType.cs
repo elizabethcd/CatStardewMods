@@ -7,6 +7,7 @@
         FrozenGeode,
         MagmaGeode,
         OmniGeode,
-        ArtifactTrove
+        ArtifactTrove,
+        GoldenCoconut
     }
 }
