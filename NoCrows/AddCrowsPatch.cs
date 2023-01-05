@@ -7,6 +7,7 @@ namespace NoCrows
 {
     /// <summary>Patches the farm crows method to do nothing.</summary>
     [HarmonyPatch]
+    [HarmonyPriority(Priority.High)]
     internal class AddCrowsPatch
     {
         /// <summary>Gets the method to patch.</summary>
