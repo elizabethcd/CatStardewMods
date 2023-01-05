@@ -45,7 +45,8 @@ namespace BetterFruitTrees
 
             IList<Tuple<string, Type, Type>> replacements = new List<Tuple<string, Type, Type>>
             {
-                { nameof(SObject.placementAction), typeof(SObject), typeof(PlacementPatch)}
+                { nameof(SObject.placementAction), typeof(SObject), typeof(PlacementPatch)},
+                { nameof(Multiplayer.broadcastGlobalMessage), typeof(Multiplayer), typeof (PlacementWarningPatch) }
             };
 
             Type junimoHarvesterType = typeof(JunimoHarvester);

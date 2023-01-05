@@ -47,17 +47,19 @@ namespace BetterFruitTrees.Patches
                     break;
             }
 
-            bool correctTileProperties = IsFarm(location) ? ((location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable",
-                                              "Back") != null ||
-                                          location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type",
-                                              "Back").Equals("Grass")) &&
-                                         !location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y,
-                                             "NoSpawn", "Back").Equals("Tree")) : (location.IsGreenhouse && (location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable",
-                                                                                                                "Back") != null ||
-                                                                                                            location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type",
-                                                                                                                "Back").Equals("Stone")));
+            // Old logic pre-1.5 
+            //bool correctTileProperties = IsFarm(location) ? ((location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable",
+            //                                  "Back") != null ||
+            //                              location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type",
+            //                                  "Back").Equals("Grass")) &&
+            //                             !location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y,
+            //                                 "NoSpawn", "Back").Equals("Tree")) : (location.IsGreenhouse && (location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable", "Back") != null ||                                                                                                            location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type","Back").Equals("Stone")));
 
-            bool gameValidLocation = IsFarm(location) || location.IsGreenhouse;
+            bool correctTileProperties = (location is Farm && (location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable", "Back") != null || location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type", "Back").Equals("Grass") || location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type", "Back").Equals("Dirt")) && !location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "NoSpawn", "Back").Equals("Tree"))
+                || (location.CanPlantTreesHere(__instance.ParentSheetIndex, (int)index1.X, (int)index1.Y) && (location.doesTileHaveProperty((int)index1.X, (int)index1.Y, "Diggable", "Back") != null || location.doesTileHavePropertyNoNull((int)index1.X, (int)index1.Y, "Type", "Back").Equals("Stone")));
+
+            // Follow logic from GameLocation.CanPlantTreesHere() better
+            bool gameValidLocation = IsFarm(location) || location.IsGreenhouse || (location.CanPlantTreesHere(__instance.ParentSheetIndex, (int)index1.X, (int)index1.Y));
 
             //If the game would return true, let it run
             if (gameValidLocation && correctTileProperties && !nearbyTree)
