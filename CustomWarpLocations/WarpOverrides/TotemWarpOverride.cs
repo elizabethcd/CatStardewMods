@@ -31,6 +31,10 @@ namespace CustomWarpLocations.WarpOverrides
                 case 261:
                     newLocation = WarpLocations.DesertWarpLocation_Totem;
                     break;
+
+                case 886:
+                    newLocation = WarpLocations.IslandWarpLocation_Totem;
+                    break;
             }
 
             return newLocation;

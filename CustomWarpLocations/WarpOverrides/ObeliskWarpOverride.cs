@@ -19,6 +19,10 @@ namespace CustomWarpLocations.WarpOverrides
                     return WarpLocations.MountainWarpLocation_Obelisk;
                 case "Water Obelisk":
                     return WarpLocations.BeachWarpLocation_Obelisk;
+                case "Island Obelisk":
+                    return WarpLocations.IslandWarpLocation_Obelisk;
+                case "Farm Obelisk":
+                    return WarpLocations.FarmWarpLocation_Obelisk;
                 default:
                 case "Desert Obelisk":
                     return WarpLocations.DesertWarpLocation_Obelisk;

@@ -35,7 +35,13 @@ namespace CustomWarpLocations
             "Woods",
             "Sewer",
             "BugLand",
-            "WitchSwamp"
+            "WitchSwamp",
+            "IslandNorth",
+            "IslandWest",
+            "IslandSouthEast",
+            "IslandSouthEastCave",
+            "IslandNorthCave1",
+            "FarmCave"
         };
 
         private ModConfig config;
@@ -115,6 +121,18 @@ namespace CustomWarpLocations
 
                     case 768: //Solar essence
                         this.SetWarpLocation(WarpLocationCategory.Desert, false, location);
+                        break;
+
+                    case 886: //Island Totem
+                        this.SetWarpLocation(WarpLocationCategory.Island, true, location);
+                        break;
+
+                    case 852: //Dragon tooth
+                        this.SetWarpLocation(WarpLocationCategory.Island, false, location);
+                        break;
+
+                    case 848: //Cinder shard
+                        this.SetWarpLocation(WarpLocationCategory.FarmFromIsland, false, location);
                         break;
                 }
 
@@ -214,6 +232,30 @@ namespace CustomWarpLocations
                     }
 
                     break;
+
+                case WarpLocationCategory.Island:
+                    if (!this.config.AdvancedMode)
+                    {
+                        WarpLocations.IslandWarpLocation_Totem = newLocation;
+                        WarpLocations.IslandWarpLocation_Obelisk = newLocation;
+                        Game1.showGlobalMessage("New Island Warp Location Saved!");
+                    }
+                    else if (fromTotem)
+                    {
+                        WarpLocations.IslandWarpLocation_Totem = newLocation;
+                        Game1.showGlobalMessage("New Island Warp Totem Location Saved!");
+                    }
+                    else
+                    {
+                        WarpLocations.IslandWarpLocation_Obelisk = newLocation;
+                        Game1.showGlobalMessage("New Island Warp Obelisk Location Saved!");
+                    }
+                    break;
+
+                case WarpLocationCategory.FarmFromIsland:
+                    WarpLocations.FarmWarpLocation_Obelisk = newLocation;
+                    Game1.showGlobalMessage("New Farm Obelisk Warp Location Saved!");
+                    break;
             }
 
             for (var index = 0; index < 12; ++index)
@@ -256,7 +298,7 @@ namespace CustomWarpLocations
                                 break;
                         }
 
-                        if (newWarp != null)
+                        if (newWarp != null && newWarp.GetWarpLocation() != null)
                             action.afterFadeBehavior = newWarp.DoWarp;
                     }
                 }
@@ -290,6 +332,13 @@ namespace CustomWarpLocations
                 locations.DesertWarpLocation_Obelisk = defaults.DesertWarpLocation_Obelisk;
             if (!AllowedWarpLocations.Contains(locations.DesertWarpLocation_Totem.locationName))
                 locations.DesertWarpLocation_Totem = defaults.DesertWarpLocation_Totem;
+
+            if (!AllowedWarpLocations.Contains(locations.IslandWarpLocation_Obelisk.locationName))
+                locations.IslandWarpLocation_Obelisk = defaults.IslandWarpLocation_Obelisk;
+            if (!AllowedWarpLocations.Contains(locations.IslandWarpLocation_Totem.locationName))
+                locations.IslandWarpLocation_Totem = defaults.IslandWarpLocation_Totem;
+            if (!AllowedWarpLocations.Contains(locations.FarmWarpLocation_Obelisk.locationName))
+                locations.FarmWarpLocation_Obelisk = defaults.FarmWarpLocation_Obelisk;
         }
 
         /**
