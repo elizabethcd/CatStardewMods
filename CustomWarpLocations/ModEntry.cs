@@ -130,10 +130,6 @@ namespace CustomWarpLocations
                     case 852: //Dragon tooth
                         this.SetWarpLocation(WarpLocationCategory.Island, false, location);
                         break;
-
-                    case 848: //Cinder shard
-                        this.SetWarpLocation(WarpLocationCategory.FarmFromIsland, false, location);
-                        break;
                 }
 
                 this.Helper.Data.WriteJsonFile(LocationSaveFileName, WarpLocations);
@@ -251,11 +247,6 @@ namespace CustomWarpLocations
                         Game1.showGlobalMessage("New Island Warp Obelisk Location Saved!");
                     }
                     break;
-
-                case WarpLocationCategory.FarmFromIsland:
-                    WarpLocations.FarmWarpLocation_Obelisk = newLocation;
-                    Game1.showGlobalMessage("New Farm Obelisk Warp Location Saved!");
-                    break;
             }
 
             for (var index = 0; index < 12; ++index)
@@ -337,8 +328,6 @@ namespace CustomWarpLocations
                 locations.IslandWarpLocation_Obelisk = defaults.IslandWarpLocation_Obelisk;
             if (!AllowedWarpLocations.Contains(locations.IslandWarpLocation_Totem.locationName))
                 locations.IslandWarpLocation_Totem = defaults.IslandWarpLocation_Totem;
-            if (!AllowedWarpLocations.Contains(locations.FarmWarpLocation_Obelisk.locationName))
-                locations.FarmWarpLocation_Obelisk = defaults.FarmWarpLocation_Obelisk;
         }
 
         /**

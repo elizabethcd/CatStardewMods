@@ -30,8 +30,7 @@ namespace CustomWarpLocations.WarpOverrides
             Mountains,
             Beach,
             Desert,
-            Island,
-            FarmFromIsland
+            Island
         }
     }
 }
