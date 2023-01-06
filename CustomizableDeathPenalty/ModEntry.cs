@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using System.Linq;
+using HarmonyLib;
 
 namespace CustomizableDeathPenalty
 {
@@ -27,6 +28,10 @@ namespace CustomizableDeathPenalty
 
             PlayerStateManager.SetConfig(config);
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+
+            DeathPatcher.Initialize(this.Monitor, config);
+            var harmony = new Harmony(this.ModManifest.UniqueID);
+            DeathPatcher.Apply(harmony);
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
