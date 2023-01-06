@@ -66,9 +66,15 @@ namespace CustomizableDeathPenalty
 
             if (numberOfItemsLost > 0)
             {
-                Game1.activeClickableMenu = new ItemListMenu(Game1.content.LoadString("Strings\\UI:ItemList_ItemsLost"), Game1.player.itemsLostLastDeath.ToList());
+                __instance.CurrentCommand++;
+                List<string> tmp = __instance.eventCommands.ToList();
+                tmp.Insert(__instance.CurrentCommand + 1, "showItemsLost");
+                __instance.eventCommands = tmp.ToArray();
             }
-            __instance.CurrentCommand++;
+            else
+            {
+                __instance.CurrentCommand++;
+            }
         }
 
         private static void Event_command_hospitaldeath_Postfix(Event __instance)
@@ -76,8 +82,8 @@ namespace CustomizableDeathPenalty
             int moneyToLose = calculateLossesHospital().Item1;
             int numberOfItemsLost = calculateLossesHospital().Item2;
 
-            // Do nothing if you wouldn't have lost anything
-            if (moneyToLose == 0 && numberOfItemsLost == 0)
+            // Do nothing if you wouldn't have lost anything or if nothing is changed
+            if ((moneyToLose == 0 && numberOfItemsLost == 0) || (!Config.KeepItems && !Config.KeepMoney))
             {
                 return;
             }
@@ -92,13 +98,22 @@ namespace CustomizableDeathPenalty
                 numberOfItemsLost = 0;
             }
 
-            Game1.drawObjectDialogue(((moneyToLose > 0) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1068", moneyToLose) : Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1070")) + ((numberOfItemsLost > 0) ? (Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1071") + ((numberOfItemsLost == 1) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1061") : Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1062", numberOfItemsLost))) : ""));
+            // TODO: i18n for this
+            string newHarveyExcuse = "Harvey graciously treated me for free. How nice! ";
+
+            Game1.drawObjectDialogue(((moneyToLose > 0) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1068", moneyToLose) : newHarveyExcuse) + ((numberOfItemsLost > 0) ? (Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1071") + ((numberOfItemsLost == 1) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1061") : Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1062", numberOfItemsLost))) : ""));
 
             if (numberOfItemsLost > 0)
             {
-                Game1.activeClickableMenu = new ItemListMenu(Game1.content.LoadString("Strings\\UI:ItemList_ItemsLost"), Game1.player.itemsLostLastDeath.ToList());
+                __instance.CurrentCommand++;
+                List<string> tmp = __instance.eventCommands.ToList();
+                tmp.Insert(__instance.CurrentCommand + 1, "showItemsLost");
+                __instance.eventCommands = tmp.ToArray();
             }
-            __instance.CurrentCommand++;
+            else
+            {
+                __instance.CurrentCommand++;
+            }
         }
 
         private static (int,int) calculateLossesMines()
