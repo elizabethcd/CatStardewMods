@@ -36,7 +36,7 @@ namespace RangeDisplay.Framework.RangeHandling.RangeCreators
         public IEnumerable<Vector2> CreateRange(SObject obj, Vector2 position, GameLocation location)
         {
             for (int i = -5; i < 6; i++)
-                for (int j = -4; j < 5; j++)
+                for (int j = -5; j < 6; j++)
                     if (Math.Abs(i) + Math.Abs(j) < 6)
                         yield return new Vector2(position.X + i, position.Y + j);
         }
