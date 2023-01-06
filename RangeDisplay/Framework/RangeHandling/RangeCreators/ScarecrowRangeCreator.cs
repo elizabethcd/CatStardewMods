@@ -33,7 +33,7 @@ namespace RangeDisplay.Framework.RangeHandling.RangeCreators
         /// <returns>Whether range can be created for it.</returns>
         public bool CanCreateRangeFor(SObject obj)
         {
-            return (obj.bigCraftable.Value && obj.name.ToLower().Contains("arecrow")) || (this.prismaticToolsAPI != null && this.prismaticToolsAPI.ArePrismaticSprinklersScarecrows && obj.ParentSheetIndex == this.prismaticToolsAPI.SprinklerIndex);
+            return (obj.IsScarecrow()) || (this.prismaticToolsAPI != null && this.prismaticToolsAPI.ArePrismaticSprinklersScarecrows && obj.ParentSheetIndex == this.prismaticToolsAPI.SprinklerIndex);
         }
 
         /// <summary>Creates a range.</summary>
@@ -44,7 +44,7 @@ namespace RangeDisplay.Framework.RangeHandling.RangeCreators
         /// <remarks>Derived from <see cref="Farm.addCrows"/>.</remarks>
         public IEnumerable<Vector2> CreateRange(SObject obj, Vector2 position, GameLocation location)
         {
-            int radius = obj.Name.Contains("Deluxe") ? 17 : 9;
+            int radius = obj.GetRadiusForScarecrow();
 
             for (int x = -radius; x <= radius; x++)
             {
