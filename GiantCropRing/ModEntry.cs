@@ -15,12 +15,13 @@ namespace GiantCropRing
     public class ModEntry : Mod
     {
         private ModConfig config;
+        private IModHelper modHelper;
 
         /// <summary>The Json Assets mod API.</summary>
         private IJsonAssets JA_API;
 
         /// <summary>The item ID for the Giant Crop Ring.</summary>
-        public int GiantCropRingID => this.JA_API.GetObjectId("Giant Crop Ring");
+        public int GiantCropRingID;
 
         private int numberOfTimeTicksWearingOneRing;
         private int numberOfTimeTicksWearingTwoRings;
@@ -31,13 +32,21 @@ namespace GiantCropRing
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.DayEnding += this.OnDayEnding;
             helper.Events.GameLoop.TimeChanged += this.OnTimeChanged;
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
             this.config = helper.ReadConfig<ModConfig>();
+            this.modHelper = helper;
+        }
 
+        /// <summary>Raised after the game is launched.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
             // Grab JA API in order to create ring
-            JA_API = helper.ModRegistry.GetApi<IJsonAssets>("spacechase0.JsonAssets");
+            JA_API = this.modHelper.ModRegistry.GetApi<IJsonAssets>("spacechase0.JsonAssets");
             if (JA_API == null)
             {
                 this.Monitor.Log("Could not get Json Assets API, mod will not work!", LogLevel.Error);
@@ -45,6 +54,7 @@ namespace GiantCropRing
             else
             {
                 this.JA_API.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+                GiantCropRingID = this.JA_API.GetObjectId("Giant Crop Ring");
             }
         }
 
