@@ -19,6 +19,10 @@ namespace GiantCropRing
 
         /// <summary>The Json Assets mod API.</summary>
         private IJsonAssets JA_API;
+        /// <summary>The More Giant Crops mod API.</summary>
+        private IMoreGiantCrops MoreGiantCropsAPI;
+        /// <summary>The Giant Crop Tweaks mod API.</summary>
+        private IGiantCropTweaks GiantCropTweaksAPI;
 
         /// <summary>The item ID for the Giant Crop Ring.</summary>
         public int GiantCropRingID => this.JA_API.GetObjectId("Giant Crop Ring");
@@ -55,6 +59,12 @@ namespace GiantCropRing
             {
                 this.JA_API.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
             }
+
+            // Grab More Giant Crops API
+            MoreGiantCropsAPI = this.modHelper.ModRegistry.GetApi<IMoreGiantCrops>("spacechase0.MoreGiantCrops");
+
+            // Grab Giant Crop Tweaks API
+            GiantCropTweaksAPI = this.modHelper.ModRegistry.GetApi<IGiantCropTweaks>("leclair.giantcroptweaks");
         }
 
         /// <summary>Raised after the in-game clock time changes.</summary>
@@ -73,6 +83,8 @@ namespace GiantCropRing
                 this.numberOfTimeTicksWearingOneRing++;
 
             this.totalNumberOfSeenTimeTicks++;
+
+            this.Monitor.Log($"Player is wearing {numberOfCropRingsWorn} Giant Crop Rings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -137,7 +149,10 @@ namespace GiantCropRing
             if (this.config.shouldWearingBothRingsDoublePercentage && this.numberOfTimeTicksWearingTwoRings / (this.totalNumberOfSeenTimeTicks * 1.0) >= this.config.percentOfDayNeededToWearRingToTriggerEffect)
                 chance = 2 * this.config.cropChancePercentWithRing;
 
-            if (chance > 0) this.MaybeChangeCrops(chance, Game1.getFarm());
+            if (chance > 0) {
+                Monitor.Log("Rings worn enough, rolling dice to see if we should try growing a giant crop!");
+                this.MaybeChangeCrops(chance, Game1.getFarm());
+            }
 
             this.numberOfTimeTicksWearingOneRing = 0;
             this.numberOfTimeTicksWearingTwoRings = 0;
@@ -207,8 +222,8 @@ namespace GiantCropRing
                 let dirt = feature.Value as HoeDirt
                 let crop = dirt?.crop
                 where
-                    dirt.state.Value == HoeDirt.watered
-                    && crop != null
+                    crop != null
+                    && dirt.state.Value == HoeDirt.watered
                     && !crop.dead.Value
                     && (
                         location.SeedsIgnoreSeasonsHere()
@@ -230,16 +245,29 @@ namespace GiantCropRing
             // JA crops with giant crops
             if (JA_API != null)
             {
-                int[] JA_giants = JA_API.GetGiantCropIndexes();
-                if (JA_giants.Contains(crop.indexOfHarvest.Value))
+                if (JA_API.GetGiantCropIndexes().Contains(crop.indexOfHarvest.Value))
                 {
                     return true;
                 }
             }
 
             // More Giant Crops crops
+            if (MoreGiantCropsAPI != null)
+            {
+                if (MoreGiantCropsAPI.RegisteredCrops().Contains(crop.indexOfHarvest.Value))
+                {
+                    return true;
+                }
+            }
 
             // Giant Crop Tweaks crops
+            if (GiantCropTweaksAPI != null)
+            {
+                if (GiantCropTweaksAPI.GiantCrops.ContainsKey(crop.indexOfHarvest.ToString()))
+                {
+                    return true;
+                }
+            }
             
             return false;
         }
