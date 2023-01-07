@@ -27,6 +27,11 @@ namespace GiantCropRing
         /// <summary>The item ID for the Giant Crop Ring.</summary>
         public int GiantCropRingID => this.JA_API.GetObjectId("Giant Crop Ring");
 
+        // Helpful records of giant crops available
+        private int[] JsonAssetsGiantCrops;
+        private int[] MoreGiantCropsGiantCrops;
+        private IReadOnlyDictionary<string, IGiantCropData> GiantCropTweaksGiantCrops;
+
         private int numberOfTimeTicksWearingOneRing;
         private int numberOfTimeTicksWearingTwoRings;
 
@@ -170,6 +175,7 @@ namespace GiantCropRing
                                       yTile).NextDouble();
 
                 bool okCrop = true;
+                getGiantCropLists();
                 if (crop.currentPhase.Value == crop.phaseDays.Count - 1 &&
                     canBeGiant(crop) && rand < chance)
                 {
@@ -232,6 +238,27 @@ namespace GiantCropRing
             );
         }
 
+        private void getGiantCropLists()
+        {
+            // JA crops with giant crops
+            if (JA_API != null)
+            {
+                JsonAssetsGiantCrops = JA_API.GetGiantCropIndexes();
+            }
+
+            // More Giant Crops crops
+            if (MoreGiantCropsAPI != null)
+            {
+                MoreGiantCropsGiantCrops = MoreGiantCropsAPI.RegisteredCrops();
+            }
+
+            // Giant Crop Tweaks crops
+            if (GiantCropTweaksAPI != null)
+            {
+                GiantCropTweaksGiantCrops = GiantCropTweaksAPI.GiantCrops;
+            }
+        }
+
         private bool canBeGiant(Crop crop)
         {
             // Vanilla crops
@@ -243,7 +270,7 @@ namespace GiantCropRing
             // JA crops with giant crops
             if (JA_API != null)
             {
-                if (JA_API.GetGiantCropIndexes().Contains(crop.indexOfHarvest.Value))
+                if (JsonAssetsGiantCrops.Contains(crop.indexOfHarvest.Value))
                 {
                     return true;
                 }
@@ -252,7 +279,7 @@ namespace GiantCropRing
             // More Giant Crops crops
             if (MoreGiantCropsAPI != null)
             {
-                if (MoreGiantCropsAPI.RegisteredCrops().Contains(crop.indexOfHarvest.Value))
+                if (MoreGiantCropsGiantCrops.Contains(crop.indexOfHarvest.Value))
                 {
                     return true;
                 }
@@ -261,7 +288,7 @@ namespace GiantCropRing
             // Giant Crop Tweaks crops
             if (GiantCropTweaksAPI != null)
             {
-                if (GiantCropTweaksAPI.GiantCrops.ContainsKey(crop.indexOfHarvest.ToString()))
+                if (GiantCropTweaksGiantCrops.ContainsKey(crop.indexOfHarvest.ToString()))
                 {
                     return true;
                 }
