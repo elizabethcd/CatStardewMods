@@ -62,15 +62,14 @@ namespace GiantCropRing
         /// <param name="e">The event arguments.</param>
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            bool left = Game1.player.leftRing.Value.ParentSheetIndex == GiantCropRingID;
-            bool right = Game1.player.rightRing.Value.ParentSheetIndex == GiantCropRingID;
+            int numberOfCropRingsWorn = Game1.player.GetEffectsOfRingMultiplier(GiantCropRingID);
 
-            if (left && right)
+            if (numberOfCropRingsWorn >= 2)
             {
                 this.numberOfTimeTicksWearingOneRing++;
                 this.numberOfTimeTicksWearingTwoRings++;
             }
-            else if (left || right)
+            else if (numberOfCropRingsWorn == 1)
                 this.numberOfTimeTicksWearingOneRing++;
 
             this.totalNumberOfSeenTimeTicks++;
@@ -114,7 +113,7 @@ namespace GiantCropRing
                     if (editor.Data.TryGetValue(GiantCropRingID, out string val))
                     {
                         string[] valSplit = val.Split('/');
-                        valSplit[2] = (this.config.cropRingPrice / 2).ToString();
+                        valSplit[2] = (this.config.cropRingPrice).ToString();
                         editor.Data[GiantCropRingID] = String.Join('/', valSplit);
                     }
                 });
