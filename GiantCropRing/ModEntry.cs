@@ -195,7 +195,7 @@ namespace GiantCropRing
             }
         }
 
-        private IEnumerable<(Vector2 location, Crop)> GetValidCrops()
+        private IEnumerable<(Vector2 location, Crop crop)> GetValidCrops()
         {
             return (
                 from location in Game1.locations.OfType<Farm>()
