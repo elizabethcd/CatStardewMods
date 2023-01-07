@@ -146,12 +146,10 @@ namespace GiantCropRing
 
         private void MaybeChangeCrops(double chance, GameLocation environment)
         {
-            foreach (Tuple<Vector2, Crop> tup in this.GetValidCrops())
+            foreach ((Vector2 loc, Crop crop) in this.GetValidCrops())
             {
-                int xTile = (int)tup.Item1.X;
-                int yTile = (int)tup.Item1.Y;
-
-                Crop crop = tup.Item2;
+                int xTile = (int)loc.X;
+                int yTile = (int)loc.Y;
 
                 double rand = new Random((int)Game1.uniqueIDForThisGame + (int)Game1.stats.DaysPlayed + xTile * 2000 +
                                       yTile).NextDouble();
@@ -197,7 +195,7 @@ namespace GiantCropRing
             }
         }
 
-        private List<Tuple<Vector2, Crop>> GetValidCrops()
+        private IEnumerable<(Vector2 location, Crop)> GetValidCrops()
         {
             return (
                 from location in Game1.locations.OfType<Farm>()
@@ -207,16 +205,16 @@ namespace GiantCropRing
                 let dirt = feature.Value as HoeDirt
                 let crop = dirt?.crop
                 where
-                    dirt.state.Value == HoeDirt.watered
-                    && crop != null
+                    crop != null
+                    && dirt.state.Value == HoeDirt.watered
                     && !crop.dead.Value
                     && (
                         location.SeedsIgnoreSeasonsHere()
                         || crop.seasonsToGrowIn.Contains(location.GetSeasonForLocation())
                     )
 
-                select Tuple.Create(tile, crop)
-            ).ToList();
+                select (tile, crop)
+            );
         }
 
         private bool canBeGiant(Crop crop)
