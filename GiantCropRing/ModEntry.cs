@@ -21,7 +21,7 @@ namespace GiantCropRing
         private IJsonAssets JA_API;
 
         /// <summary>The item ID for the Giant Crop Ring.</summary>
-        public int GiantCropRingID;
+        public int GiantCropRingID => this.JA_API.GetObjectId("Giant Crop Ring");
 
         private int numberOfTimeTicksWearingOneRing;
         private int numberOfTimeTicksWearingTwoRings;
@@ -54,7 +54,6 @@ namespace GiantCropRing
             else
             {
                 this.JA_API.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
-                GiantCropRingID = this.JA_API.GetObjectId("Giant Crop Ring");
             }
         }
 
@@ -100,6 +99,12 @@ namespace GiantCropRing
         /// <param name="e">The event arguments.</param>
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
+            // Can't nothing if we haven't got IDs
+            if (GiantCropRingID < 0)
+            {
+                return;
+            }
+
             // Edit the giant crop ring sell price to match the config/2
             if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectInformation"))
             {
