@@ -8,6 +8,9 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="GiantRing.cs" />
+    <None Remove="assets\json-assets\Objects\Giant Crop Ring\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\json-assets\Objects\Giant Crop Ring\" />
   </ItemGroup>
 </Project>

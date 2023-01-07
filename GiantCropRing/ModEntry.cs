@@ -99,8 +99,8 @@ namespace GiantCropRing
         /// <param name="e">The event arguments.</param>
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            // Can't nothing if we haven't got IDs
-            if (GiantCropRingID < 0)
+            // Can't do nothing if we ain't got API
+            if (JA_API == null)
             {
                 return;
             }
