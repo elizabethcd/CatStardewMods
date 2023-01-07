@@ -11,6 +11,7 @@ namespace StackEverything.Patches
     {
         /// <summary>The same as <see cref="Utility.tryToPlaceHere"/> except the furniture code is commented out.</summary>
         /// <remarks> Hopefully this doesn't cause any problems. I have no idea why it was added in 1.3.</remarks>
+        /// THIS IS ACTUALLY SUPER IMPORTANT TO GET RIGHT
         public static bool Prefix(ref bool __result, GameLocation location, Item item, int x, int y)
         {
             __result = TryToPlaceItem(location, item, x, y);
@@ -24,12 +25,24 @@ namespace StackEverything.Patches
             Vector2 key = new Vector2((float)(x / 64), (float)(y / 64));
             if (Utility.playerCanPlaceItemHere(location, item, x, y, Game1.player))
             {
-                //if (item is Furniture)
-                //    Game1.player.ActiveObject = (Object)null;
-                if (((Object)item).placementAction(location, x, y, Game1.player))
+                // Furniture is HAUNTED
+                if (item is Furniture)
+                {
+                    // Make sure to place a NEW item
+                    Furniture itemToTryPlacing = (Furniture)((Furniture)item).getOne();
+                    itemToTryPlacing.Stack = 1;
+                    itemToTryPlacing.currentRotation.Value = (item as Furniture).currentRotation.Value;
+                    itemToTryPlacing.updateRotation();
+
+                    // If successfully placed, decrement the stack
+                    if (itemToTryPlacing.placementAction(location, x, y, Game1.player))
+                    {
+                        Game1.player.ActiveObject.Stack--;
+                    }
+                }
+                // Do some normal things
+                else if (((SObject)item).placementAction(location, x, y, Game1.player))
                     Game1.player.reduceActiveItemByOne();
-                else if (item is Furniture)
-                    Game1.player.ActiveObject = (Object)(item as Furniture);
                 else if (item is Wallpaper)
                     return false;
                 return true;

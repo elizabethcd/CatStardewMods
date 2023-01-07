@@ -25,7 +25,7 @@ namespace StackEverything.Patches
             furniture.performRemoveAction(furniture.TileLocation, instance);
             instance.furniture.Remove(guid);
 
-            Item result = player.addItemToInventory(furniture);
+            Item result = player.addItemToInventory(furniture.getOne());
 
             if (result != null)
             {
