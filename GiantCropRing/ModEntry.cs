@@ -7,6 +7,7 @@ using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace GiantCropRing
@@ -14,7 +15,12 @@ namespace GiantCropRing
     public class ModEntry : Mod
     {
         private ModConfig config;
-        private Texture2D giantRingTexture;
+
+        /// <summary>The Json Assets mod API.</summary>
+        private IJsonAssets JA_API;
+
+        /// <summary>The item ID for the Giant Crop Ring.</summary>
+        public int GiantCropRingID => this.JA_API.GetObjectId("Giant Crop Ring");
 
         private int numberOfTimeTicksWearingOneRing;
         private int numberOfTimeTicksWearingTwoRings;
@@ -27,12 +33,19 @@ namespace GiantCropRing
         {
             helper.Events.GameLoop.DayEnding += this.OnDayEnding;
             helper.Events.GameLoop.TimeChanged += this.OnTimeChanged;
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
             this.config = helper.ReadConfig<ModConfig>();
-            this.giantRingTexture = this.Helper.ModContent.Load<Texture2D>("assets/ring.png");
 
-            GiantRing.texture = this.giantRingTexture;
-            GiantRing.price = this.config.cropRingPrice / 2;
+            // Grab JA API in order to create ring
+            JA_API = helper.ModRegistry.GetApi<IJsonAssets>("spacechase0.JsonAssets");
+            if (JA_API == null)
+            {
+                this.Monitor.Log("Could not get Json Assets API, mod will not work!", LogLevel.Error);
+            }
+            else
+            {
+                this.JA_API.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+            }
         }
 
         /// <summary>Raised after the in-game clock time changes.</summary>
@@ -40,8 +53,8 @@ namespace GiantCropRing
         /// <param name="e">The event arguments.</param>
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            bool left = Game1.player.leftRing.Value is GiantRing;
-            bool right = Game1.player.rightRing.Value is GiantRing;
+            bool left = Game1.player.leftRing.Value.ParentSheetIndex == GiantCropRingID;
+            bool right = Game1.player.rightRing.Value.ParentSheetIndex == GiantCropRingID;
 
             if (left && right)
             {
@@ -64,11 +77,32 @@ namespace GiantCropRing
                 ShopMenu shop = (ShopMenu)Game1.activeClickableMenu;
                 if (shop.portraitPerson != null && shop.portraitPerson.Name == "Pierre") // && Game1.dayOfMonth % 7 == )
                 {
-                    var ring = new GiantRing();
+                    var ring = new StardewValley.Objects.Ring(GiantCropRingID);
 
-                    shop.itemPriceAndStock.Add(ring, new []{this.config.cropRingPrice, int.MaxValue} );
+                    shop.itemPriceAndStock.Add(ring, new[] { this.config.cropRingPrice, int.MaxValue });
                     shop.forSale.Add(ring);
                 }
+            }
+        }
+
+        /// <summary>Raised when an asset is requested.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            // Edit the giant crop ring sell price to match the config/2
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectInformation"))
+            {
+                e.Edit(asset =>
+                {
+                    IAssetDataForDictionary<int, string> editor = asset.AsDictionary<int, string>();
+                    if (editor.Data.TryGetValue(GiantCropRingID, out string val))
+                    {
+                        string[] valSplit = val.Split('/');
+                        valSplit[2] = (this.config.cropRingPrice / 2).ToString();
+                        editor.Data[GiantCropRingID] = String.Join('/', valSplit);
+                    }
+                });
             }
         }
 
@@ -110,8 +144,7 @@ namespace GiantCropRing
 
                 bool okCrop = true;
                 if (crop.currentPhase.Value == crop.phaseDays.Count - 1 &&
-                    (crop.indexOfHarvest.Value == 276 || crop.indexOfHarvest.Value == 190 || crop.indexOfHarvest.Value == 254) &&
-                    rand < chance)
+                    canBeGiant(crop) && rand < chance)
                 {
                     for (int index1 = xTile - 1; index1 <= xTile + 1; ++index1)
                     {
@@ -170,6 +203,31 @@ namespace GiantCropRing
 
                 select Tuple.Create(tile, crop)
             ).ToList();
+        }
+
+        private bool canBeGiant(Crop crop)
+        {
+            // Vanilla crops
+            if (crop.indexOfHarvest.Value == 276 || crop.indexOfHarvest.Value == 190 || crop.indexOfHarvest.Value == 254)
+            {
+                return true;
+            }
+
+            // JA crops with giant crops
+            if (JA_API != null)
+            {
+                int[] JA_giants = JA_API.GetGiantCropIndexes();
+                if (JA_giants.Contains(crop.indexOfHarvest.Value))
+                {
+                    return true;
+                }
+            }
+
+            // More Giant Crops crops
+
+            // Giant Crop Tweaks crops
+            
+            return false;
         }
     }
 }

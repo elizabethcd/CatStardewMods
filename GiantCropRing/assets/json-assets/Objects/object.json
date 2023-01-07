@@ -1,0 +1,11 @@
+﻿{
+  "Name": "Giant Crop Ring",
+  "Category": "Ring",
+  "Description": "Increases the chance of growing giant crops if you wear it before going to sleep.",
+  "Edibility": -300,
+  "Price": 2500,
+  "Recipe": null,
+  "CanPurchase": true,
+  "PurchasePrice": 5000,
+  "TranslationKey": "giant-crop-ring"
+}

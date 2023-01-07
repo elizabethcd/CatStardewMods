@@ -8,4 +8,14 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2" />
     <PackageReference Include="Platonymous.PyTK" Version="1.12.40" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="assets\json-assets\" />
+    <None Remove="assets\json-assets\Objects\" />
+    <None Remove="i18n\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\json-assets\" />
+    <Folder Include="assets\json-assets\Objects\" />
+    <Folder Include="i18n\" />
+  </ItemGroup>
 </Project>
