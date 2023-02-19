@@ -44,12 +44,12 @@ namespace ChatCommands.Util
         {
             string colorName = Enum.GetName(typeof(ConsoleColor), color);
 
-            if (overrides.TryGetValue(colorName, out string newName))
+            if (!(colorName is null) && overrides.TryGetValue(colorName, out string newName))
             {
                 return ColorFromNameOrDefault(newName);
             }
 
-            if (color == ConsoleColor.White || color == ConsoleColor.Black)
+            if (colorName is null || color == ConsoleColor.White || color == ConsoleColor.Black)
                 return DefaultCommandColor;
 
             return ColorFromNameOrDefault(colorName);

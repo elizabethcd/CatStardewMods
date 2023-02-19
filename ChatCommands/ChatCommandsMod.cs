@@ -8,6 +8,8 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
+using System.Reflection;
 
 namespace ChatCommands
 {
@@ -42,7 +44,19 @@ namespace ChatCommands
                 parts[0] = "help";
 
             this.consoleNotifier.Notify = true;
-            this.Helper.ConsoleCommands.Trigger(parts[0], parts.Skip(1).ToArray());
+
+            // Replace previous console commands trigger code with new, Pathos-written fancy stuff
+            ICommandHelper commandHelper = Helper.ConsoleCommands;
+            object commandManager = commandHelper.GetType().GetField("CommandManager", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?.GetValue(commandHelper);
+            if (commandManager is null)
+                throw new InvalidOperationException("Can't get SMAPI's underlying command manager.");
+
+            MethodInfo triggerCommand = commandManager.GetType().GetMethod("Trigger", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (triggerCommand is null)
+                throw new InvalidOperationException("Can't get SMAPI's underlying CommandManager.Trigger method.");
+
+            triggerCommand.Invoke(commandManager, new object[] { parts[0], parts.Skip(1).ToArray() });
+
             this.consoleNotifier.Notify = false;
         }
 
