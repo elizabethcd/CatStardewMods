@@ -166,6 +166,8 @@ namespace GiantCropRing
 
         private void MaybeChangeCrops(double chance, GameLocation environment)
         {
+            getGiantCropLists();
+
             foreach ((Vector2 loc, Crop crop) in this.GetValidCrops())
             {
                 int xTile = (int)loc.X;
@@ -175,10 +177,10 @@ namespace GiantCropRing
                                       yTile).NextDouble();
 
                 bool okCrop = true;
-                getGiantCropLists();
                 if (crop.currentPhase.Value == crop.phaseDays.Count - 1 &&
                     canBeGiant(crop) && rand < chance)
                 {
+                    Monitor.Log("Trying to create giant crop!");
                     for (int index1 = xTile - 1; index1 <= xTile + 1; ++index1)
                     {
                         for (int index2 = yTile - 1; index2 <= yTile + 1; ++index2)
@@ -203,6 +205,7 @@ namespace GiantCropRing
                     if (!okCrop)
                         continue;
 
+                    Monitor.Log("Creating giant crop!");
                     for (int index1 = xTile - 1; index1 <= xTile + 1; ++index1)
                         for (int index2 = yTile - 1; index2 <= yTile + 1; ++index2)
                         {
