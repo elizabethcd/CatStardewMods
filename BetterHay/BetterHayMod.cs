@@ -17,13 +17,7 @@ namespace BetterHay
         //Config
         public static ModConfig Config;
 
-        //Current player location
-        public GameLocation CurrentLocation;
-
         private Random dropGrassStarterRandom;
-
-        //Last list of terrain features
-        private Dictionary<Vector2, TerrainFeature> lastTerrainFeatures;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -34,8 +28,7 @@ namespace BetterHay
 
             if (Config.EnableGettingHayFromGrassAnytime)
             {
-                helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
-                helper.Events.Player.Warped += this.OnWarped;
+                helper.Events.World.TerrainFeatureListChanged += this.OnTerrainFeatureListChanged;
             }
 
             if (Config.EnableTakingHayFromHoppersAnytime)
@@ -48,17 +41,14 @@ namespace BetterHay
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnTerrainFeatureListChanged(object sender, TerrainFeatureListChangedEventArgs e)
         {
             // check for removed grass and spawn hay if appropriate
-            if (Config.EnableGettingHayFromGrassAnytime && e.IsMultipleOf(8))
+            if (Config.EnableGettingHayFromGrassAnytime)
             {
-                if (Game1.player?.currentLocation?.terrainFeatures == null || this.lastTerrainFeatures == null || Game1.player.currentLocation != this.CurrentLocation)
-                    return;
-
-                foreach (KeyValuePair<Vector2, TerrainFeature> item in this.lastTerrainFeatures)
+                foreach (KeyValuePair<Vector2, TerrainFeature> item in e.Removed)
                 {
-                    if (!Game1.player.currentLocation.terrainFeatures.FieldDict.ContainsKey(item.Key) && item.Value is Grass grass && grass.numberOfWeeds.Value <= 0 && grass.grassType.Value == 1)
+                    if (item.Value is Grass grass && grass.numberOfWeeds.Value <= 0 && grass.grassType.Value == 1)
                     {
                         if ((Game1.IsMultiplayer
                                 ? Game1.recentMultiplayerRandom
@@ -81,11 +71,6 @@ namespace BetterHay
                         }
                     }
                 }
-
-                this.lastTerrainFeatures = Game1.player.currentLocation?.terrainFeatures?.FieldDict.ToDictionary(
-                    entry => entry.Key,
-                    entry => entry.Value.Value
-                );
             }
         }
 
@@ -107,22 +92,6 @@ namespace BetterHay
         private bool IsWithinRange(Vector2 first, Vector2 second, double range)
         {
             return Math.Sqrt(Math.Pow(first.X - second.X, 2) + Math.Pow(first.Y - second.Y, 2)) < range;
-        }
-
-        /// <summary>Raised after a player warps to a new location.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnWarped(object sender, WarpedEventArgs e)
-        {
-            if (e.IsLocalPlayer)
-            {
-                // update the last list of terrain features
-                if (Config.EnableGettingHayFromGrassAnytime)
-                {
-                    this.lastTerrainFeatures = e.NewLocation?.terrainFeatures?.FieldDict.ToDictionary(item => item.Key, item => item.Value.Value);
-                    this.CurrentLocation = e.NewLocation;
-                }
-            }
         }
     }
 }
