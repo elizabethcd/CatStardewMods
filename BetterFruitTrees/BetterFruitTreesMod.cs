@@ -3,6 +3,8 @@ using BetterFruitTrees.Patches.JunimoHarvester;
 using BetterFruitTrees.Patches.JunimoHut;
 using HarmonyLib;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
@@ -36,12 +38,11 @@ namespace BetterFruitTrees
             Instance = this;
 
             this.Config = helper.ReadConfig<BetterFruitTreesConfig>();
+            Utils.Config = this.Config;
 
             new GrowHelper(helper.Events);
 
             var harmony = new Harmony("cat.betterfruittrees");
-
-            Utils.HarvestThreeAtOnce = this.Config.Wait_To_Harvest_Fruit_Trees_Until_They_Have_Three_Fruits__Then_Harvest_All_Three_At_Once;
 
             IList<Tuple<string, Type, Type>> replacements = new List<Tuple<string, Type, Type>>
             {
@@ -57,9 +58,8 @@ namespace BetterFruitTrees
                 { "areThereMatureCropsWithinRadius", typeof(JunimoHut), typeof(AreThereMatureCropsWithinRadiusPatch) }
             };
 
-            if (!this.Config.Disable_Fruit_Tree_Junimo_Harvesting)
-                foreach (Tuple<string, Type, Type> item in junimoReplacements)
-                    replacements.Add(item);
+            foreach (Tuple<string, Type, Type> item in junimoReplacements)
+                replacements.Add(item);
 
             foreach (Tuple<string, Type, Type> replacement in replacements)
             {
@@ -74,6 +74,67 @@ namespace BetterFruitTrees
 
                 harmony.Patch(original, prefix == null ? null : new HarmonyMethod(prefix),
                     postfix == null ? null : new HarmonyMethod(postfix));
+            }
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+            {
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => this.Config = new BetterFruitTreesConfig(),
+                save: () => this.Helper.WriteConfig(this.Config));
+
+            foreach (System.Reflection.PropertyInfo property in typeof(BetterFruitTreesConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
             }
         }
 

@@ -11,6 +11,10 @@ namespace BetterFruitTrees.Patches.JunimoHut
             if (__result)
                 return;
 
+            // If junimo harvesting disabled, do nothing
+            if (Utils.Config.Disable_Fruit_Tree_Junimo_Harvesting)
+                return;
+
             Farm farm = Game1.getFarm();
             for (int index1 = __instance.tileX.Value + 1 - 8; index1 < __instance.tileX.Value + 2 + 8; ++index1)
                 for (int index2 = __instance.tileY.Value - 8 + 1; index2 < __instance.tileY.Value + 2 + 8; ++index2)

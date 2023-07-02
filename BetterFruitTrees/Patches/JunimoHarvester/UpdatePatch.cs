@@ -20,6 +20,10 @@ namespace BetterFruitTrees.Patches.JunimoHarvester
         public static void Postfix(StardewValley.Characters.JunimoHarvester __instance, GameTime time,
             GameLocation location)
         {
+            // If junimo harvesting disabled, do nothing
+            if (Utils.Config.Disable_Fruit_Tree_Junimo_Harvesting)
+                return;
+
             Task backgroundTask = Utils.Reflection.GetField<Task>(__instance, "backgroundTask").GetValue();
             if ((backgroundTask != null && !backgroundTask.IsCompleted) || !Game1.IsMasterGame)
                 return;

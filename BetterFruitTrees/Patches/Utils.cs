@@ -18,11 +18,11 @@ namespace BetterFruitTrees.Patches
     internal class Utils
     {
         internal static IReflectionHelper Reflection;
-        internal static bool HarvestThreeAtOnce { get; set; }
+        internal static BetterFruitTreesConfig Config;
 
         internal static bool CanTreeBeHarvested(FruitTree tree)
         {
-            return HarvestThreeAtOnce ? tree.fruitsOnTree.Value == 3 : tree.fruitsOnTree.Value > 0;
+            return Config.Wait_To_Harvest_Fruit_Trees_Until_They_Have_Three_Fruits__Then_Harvest_All_Three_At_Once ? tree.fruitsOnTree.Value == 3 : tree.fruitsOnTree.Value > 0;
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace BetterFruitTrees.Patches
         /// <summary>Amount of fruits to harvest at a time.</summary>
         public static int TreeHarvestAmount()
         {
-            return HarvestThreeAtOnce ? 3 : 1;
+            return Config.Wait_To_Harvest_Fruit_Trees_Until_They_Have_Three_Fruits__Then_Harvest_All_Three_At_Once ? 3 : 1;
         }
 
         /// <summary>Harvest fruit from a FruitTree and update the tree accordingly.</summary>
