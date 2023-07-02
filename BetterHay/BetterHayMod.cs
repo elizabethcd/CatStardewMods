@@ -16,7 +16,7 @@ namespace BetterHay
     public class BetterHayMod : Mod
     {
         //Config
-        public ModConfig Config;
+        public static ModConfig Config;
 
         private Random dropGrassStarterRandom;
 
@@ -31,8 +31,6 @@ namespace BetterHay
             {
                 helper.Events.World.TerrainFeatureListChanged += this.OnTerrainFeatureListChanged;
             }
-
-            HopperPatch.Init(Config);
 
             var harmony = new Harmony(helper.ModRegistry.ModID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -55,8 +53,8 @@ namespace BetterHay
             // Register with GMCM
             configMenu.Register(
                 mod: this.ModManifest,
-                reset: () => this.Config = new ModConfig(),
-                save: () => this.Helper.WriteConfig(this.Config));
+                reset: () => Config = new ModConfig(),
+                save: () => this.Helper.WriteConfig(Config));
 
             foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
             {
