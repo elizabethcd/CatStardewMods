@@ -104,7 +104,8 @@ namespace BetterGardenPots
             configMenu.Register(
                 mod: this.ModManifest,
                 reset: () => Config = new BetterGardenPotsModConfig(),
-                save: () => this.Helper.WriteConfig(Config)
+                save: () => this.Helper.WriteConfig(Config),
+                titleScreenOnly: true
                 );
 
             foreach (System.Reflection.PropertyInfo property in typeof(BetterGardenPotsModConfig).GetProperties())
