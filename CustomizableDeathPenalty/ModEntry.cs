@@ -5,6 +5,7 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using System.Linq;
 using HarmonyLib;
+using StardewModdingAPI.Utilities;
 
 namespace CustomizableDeathPenalty
 {
@@ -15,6 +16,7 @@ namespace CustomizableDeathPenalty
         private bool shouldHideInfoDialogueBox;
         private bool shouldHideLostItemsDialogueBox;
         private uint multiple = 30;
+        private static ModConfig Config;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -23,8 +25,6 @@ namespace CustomizableDeathPenalty
             this.lastDialogueUp = false;
             this.numberOfSeenDialogues = 0;
             var config = helper.ReadConfig<ModConfig>();
-            this.shouldHideInfoDialogueBox = config.KeepItems && config.KeepMoney && config.RememberMineLevels;
-            this.shouldHideLostItemsDialogueBox = config.KeepItems;
 
             PlayerStateManager.SetConfig(config);
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -32,6 +32,9 @@ namespace CustomizableDeathPenalty
             DeathPatcher.Initialize(this.Monitor, config);
             var harmony = new Harmony(this.ModManifest.UniqueID);
             DeathPatcher.Apply(harmony);
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
@@ -41,6 +44,9 @@ namespace CustomizableDeathPenalty
         {
             if (e.IsMultipleOf(this.multiple)) // half second
             {
+                this.shouldHideInfoDialogueBox = Config.KeepItems && Config.KeepMoney && Config.RememberMineLevels;
+                this.shouldHideLostItemsDialogueBox = Config.KeepItems;
+
                 //If the state is not saved, and the player has just died, save the player's state.
                 if (PlayerStateManager.state == null && Game1.killScreen)
                 {
@@ -89,6 +95,90 @@ namespace CustomizableDeathPenalty
                 }
 
                 this.lastDialogueUp = Game1.dialogueUp;
+            }
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+            {
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => Config = new ModConfig(),
+                save: () => this.Helper.WriteConfig(Config));
+
+            foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(double)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, (double)value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(float)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
             }
         }
     }
