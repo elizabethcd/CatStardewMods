@@ -1,5 +1,6 @@
 ﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,67 @@ namespace AutoStacker
         {
             this.config = helper.ReadConfig<AutoStackerConfig>();
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+            {
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => this.config = new AutoStackerConfig(),
+                save: () => this.Helper.WriteConfig(this.config));
+
+            foreach (System.Reflection.PropertyInfo property in typeof(AutoStackerConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(config),
+                        setValue: value => property.SetValue(config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(config),
+                        setValue: value => property.SetValue(config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(config),
+                        setValue: value => property.SetValue(config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(config),
+                        setValue: value => property.SetValue(config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+            }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
