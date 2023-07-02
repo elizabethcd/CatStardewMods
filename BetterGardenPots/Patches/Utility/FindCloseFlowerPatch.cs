@@ -9,8 +9,19 @@ namespace BetterGardenPots.Patches.Utility
 {
     internal class FindCloseFlowerPatch
     {
+        private static BetterGardenPotsModConfig Config;
+
+        public static void Init(BetterGardenPotsModConfig config)
+        {
+            Config = config;
+        }
+
         public static bool Prefix(GameLocation location, Vector2 startTileLocation, int range, Func<Crop, bool> additional_check, ref Crop __result)
         {
+            // Do nothing if config says to do nothing
+            if (!Config.MakeBeeHousesNoticeFlowersInGardenPots)
+                return true;
+
             __result = null;
 
             Queue<Vector2> vector2Queue = new Queue<Vector2>();
