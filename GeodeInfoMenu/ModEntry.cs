@@ -159,7 +159,9 @@ namespace GeodeInfoMenu
                         mod: ModManifest,
                         getValue: () => (int)property.GetValue(this.config),
                         setValue: value => property.SetValue(this.config, value),
-                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        min: 0,
+                        max: 999
                        );
                 }
                 if (property.PropertyType.Equals(typeof(double)))
