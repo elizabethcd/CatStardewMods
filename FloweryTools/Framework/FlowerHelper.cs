@@ -9,12 +9,12 @@ namespace FloweryTools.Framework.Flowerers
     {
         public Random rand = new Random();
         private Multiplayer multiplayer;
-        private bool localOnly;
+        private ModConfig Config;
 
-        public FlowerHelper(Multiplayer multiplayer, bool localOnly)
+        public FlowerHelper(Multiplayer multiplayer, ModConfig config)
         {
             this.multiplayer = multiplayer;
-            this.localOnly = localOnly;
+            this.Config = config;
         }
 
         public void AddFlower(Vector2 offset, Vector2 motion, GameLocation location)
@@ -25,7 +25,7 @@ namespace FloweryTools.Framework.Flowerers
                timeBasedMotion = true
             };
             
-            if (localOnly)
+            if (Config.LocalOnly)
                 location.TemporarySprites.Add(sprite);
             else
                 this.multiplayer.broadcastSprites(location, sprite);

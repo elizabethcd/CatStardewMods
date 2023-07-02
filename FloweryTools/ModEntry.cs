@@ -3,6 +3,7 @@ using FloweryTools.Framework.Flowerers;
 using FloweryTools.ParticleCreator;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using System.Collections.Generic;
 using System.Reflection;
@@ -21,6 +22,8 @@ namespace FloweryTools
         private IParticleCreator explosionCreator;
         private IParticleCreator slingshotCreator;
 
+        private ModConfig Config;
+
         /*********
         ** Public methods
         *********/
@@ -28,11 +31,11 @@ namespace FloweryTools
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            ModConfig config = this.Helper.ReadConfig<ModConfig>();
+            this.Config = this.Helper.ReadConfig<ModConfig>();
 
             Multiplayer multiplayer = typeof(Game1).GetField("multiplayer", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null) as Multiplayer;
 
-            FlowerHelper flowerHelper = new FlowerHelper(multiplayer, config.LocalOnly);
+            FlowerHelper flowerHelper = new FlowerHelper(multiplayer, this.Config);
 
             flowerers = new List<IToolFlowerer> {
                 new Swipe(flowerHelper),
@@ -47,6 +50,9 @@ namespace FloweryTools
             slingshotCreator = new Slingshot(flowerHelper);
 
             helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
         }
 
         /*********
@@ -90,6 +96,90 @@ namespace FloweryTools
             } else
             {
                 this.lastcastedButBobberStillInAir = false;
+            }
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+            {
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => Config = new ModConfig(),
+                save: () => this.Helper.WriteConfig(Config));
+
+            foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(double)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, (double)value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(float)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
             }
         }
     }
