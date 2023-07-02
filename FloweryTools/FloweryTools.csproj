@@ -7,10 +7,4 @@
 	<ItemGroup>
 		<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="i18n\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="i18n\" />
-	</ItemGroup>
 </Project>
