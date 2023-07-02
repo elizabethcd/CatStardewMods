@@ -18,9 +18,9 @@ namespace BetterArtisanGoodIcons
         private static BetterArtisanGoodIconsConfig config;
 
         /// <summary>Initializes the manager.</summary>
-        internal static void Init(IModHelper helper, IMonitor monitor)
+        internal static void Init(IModHelper helper, IMonitor monitor, BetterArtisanGoodIconsConfig Config)
         {
-            config = helper.ReadConfig<BetterArtisanGoodIconsConfig>();
+            config = Config;
 
             foreach (ArtisanGoodTextureProvider provider in ContentSourceManager.GetTextureProviders(helper, monitor))
                 TextureProviders.Add(provider);
