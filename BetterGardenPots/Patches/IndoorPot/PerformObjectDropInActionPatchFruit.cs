@@ -5,18 +5,11 @@ namespace BetterGardenPots.Patches.IndoorPot
 {
     internal class PerformObjectDropInActionPatchFruit
     {
-        private static BetterGardenPotsModConfig Config;
-
-        public static void Init(BetterGardenPotsModConfig config)
-        {
-            Config = config;
-        }
-
         public static void Postfix(StardewValley.Objects.IndoorPot __instance, ref bool __result, Item dropInItem,
             bool probe, Farmer who)
         {
             // Do nothing if config says to do nothing
-            if (!Config.AllowPlantingAncientSeedsInGardenPots)
+            if (!BetterGardenPotsMod.Config.AllowPlantingAncientSeedsInGardenPots)
                 return;
 
             if (__result || dropInItem == null || dropInItem.ParentSheetIndex != 499)

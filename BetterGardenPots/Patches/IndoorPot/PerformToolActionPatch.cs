@@ -7,17 +7,11 @@ namespace BetterGardenPots.Patches.IndoorPot
     internal class PerformToolActionPatch
     {
         private static Crop crop;
-        private static BetterGardenPotsModConfig Config;
-
-        public static void Init(BetterGardenPotsModConfig config)
-        {
-            Config = config;
-        }
 
         public static void Prefix(StardewValley.Objects.IndoorPot __instance)
         {
             // Do nothing if config says not to
-            if (!Config.HarvestMatureCropsWhenGardenPotBreaks)
+            if (!BetterGardenPotsMod.Config.HarvestMatureCropsWhenGardenPotBreaks)
                 return;
 
             crop = __instance.hoeDirt.Value?.crop;
@@ -26,7 +20,7 @@ namespace BetterGardenPots.Patches.IndoorPot
         public static void Postfix(StardewValley.Objects.IndoorPot __instance, GameLocation location)
         {
             // Do nothing if config says not to
-            if (!Config.HarvestMatureCropsWhenGardenPotBreaks)
+            if (!BetterGardenPotsMod.Config.HarvestMatureCropsWhenGardenPotBreaks)
                 return;
 
             if (__instance.hoeDirt.Value?.crop == null && crop != null && crop.currentPhase.Value == crop.phaseDays.Count - 1)

@@ -19,7 +19,7 @@ namespace BetterGardenPots
     public class BetterGardenPotsMod : Mod
     {
         private readonly IList<IEventSubscriber> subscribers = new List<IEventSubscriber>();
-        private BetterGardenPotsModConfig Config;
+        internal static BetterGardenPotsModConfig Config;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -29,20 +29,17 @@ namespace BetterGardenPots
 
             Config = helper.ReadConfig<BetterGardenPotsModConfig>();
 
-            Patches.IndoorPot.DayUpdatePatch.Init(Config);
-            Patches.IndoorPot.PerformObjectDropInActionPatchFruit.Init(Config);
-            Patches.IndoorPot.PerformObjectDropInActionPatchSeasons.Init(Config);
-            Patches.IndoorPot.PerformToolActionPatch.Init(Config);
-            Patches.Utility.FindCloseFlowerPatch.Init(Config);
-
             Type indoorPotType = typeof(IndoorPot);
 
             IList<Tuple<string, Type, Type>> replacements = new List<Tuple<string, Type, Type>>();
 
+            // Mature crop drops
             replacements.Add(nameof(IndoorPot.performToolAction), indoorPotType, typeof(PerformToolActionPatch));
 
+            // Ancient Fruit planting
             replacements.Add(nameof(IndoorPot.performObjectDropInAction), indoorPotType, typeof(PerformObjectDropInActionPatchFruit));
 
+            // Out of season planting outdoors
             replacements.Add(nameof(IndoorPot.DayUpdate), indoorPotType, typeof(DayUpdatePatch));
             replacements.Add(nameof(IndoorPot.performObjectDropInAction), indoorPotType, typeof(PerformObjectDropInActionPatchSeasons));
 
@@ -106,8 +103,8 @@ namespace BetterGardenPots
             // Register with GMCM
             configMenu.Register(
                 mod: this.ModManifest,
-                reset: () => this.Config = new BetterGardenPotsModConfig(),
-                save: () => this.Helper.WriteConfig(this.Config),
+                reset: () => Config = new BetterGardenPotsModConfig(),
+                save: () => this.Helper.WriteConfig(Config),
                 titleScreenOnly: true);
 
             foreach (System.Reflection.PropertyInfo property in typeof(BetterGardenPotsModConfig).GetProperties())
