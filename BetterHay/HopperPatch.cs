@@ -9,6 +9,13 @@ namespace BetterHay
     [HarmonyPatch]
     internal class HopperPatch
     {
+        private static ModConfig Config;
+
+        public static void Init(ModConfig config)
+        {
+            Config = config;
+        }
+
         private static MethodBase TargetMethod()
         {
             return typeof(StardewValley.Object).GetMethod("checkForAction");
@@ -16,6 +23,9 @@ namespace BetterHay
 
         private static bool Prefix(SObject __instance, ref bool __result, Farmer who, bool justCheckingForActivity)
         {
+            if (!Config.EnableTakingHayFromHoppersAnytime)
+                return true;
+
             if (!__instance.name.Contains("Hopper") || who.ActiveObject != null)
                 return true;
 

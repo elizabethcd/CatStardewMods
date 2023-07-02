@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -15,7 +16,7 @@ namespace BetterHay
     public class BetterHayMod : Mod
     {
         //Config
-        public static ModConfig Config;
+        public ModConfig Config;
 
         private Random dropGrassStarterRandom;
 
@@ -31,10 +32,83 @@ namespace BetterHay
                 helper.Events.World.TerrainFeatureListChanged += this.OnTerrainFeatureListChanged;
             }
 
-            if (Config.EnableTakingHayFromHoppersAnytime)
+            HopperPatch.Init(Config);
+
+            var harmony = new Harmony(helper.ModRegistry.ModID);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
             {
-                var harmony = new Harmony(helper.ModRegistry.ModID);
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => this.Config = new ModConfig(),
+                save: () => this.Helper.WriteConfig(this.Config));
+
+            foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(double)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, (double)value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(Config),
+                        setValue: value => property.SetValue(Config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
             }
         }
 
