@@ -16,8 +16,16 @@ namespace AutoStacker
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            this.config = helper.ReadConfig<AutoStackerConfig>();
-            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            try
+            {
+                this.config = helper.ReadConfig<AutoStackerConfig>();
+            }
+            catch
+            {
+                this.config = new AutoStackerConfig();
+            }
+            
+            helper.Events.Input.ButtonsChanged += this.OnButtonChanged;
 
             // Set up GMCM config when game is launched
             helper.Events.GameLoop.GameLaunched += SetUpConfig;
@@ -84,9 +92,9 @@ namespace AutoStacker
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (e.Button == this.config.ActivationKey)
+            if (this.config.ActivationKey.JustPressed())
             {
                 this.StackOwnInventory();
             }

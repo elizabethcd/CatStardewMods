@@ -1,9 +1,10 @@
 ﻿using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 
 namespace AutoStacker
 {
     internal class AutoStackerConfig
     {
-        public SButton ActivationKey { get; set; } = SButton.K;
+        public KeybindList ActivationKey { get; set; } = KeybindList.Parse("K");
     }
 }
