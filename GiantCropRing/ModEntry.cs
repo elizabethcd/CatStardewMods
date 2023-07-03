@@ -210,7 +210,7 @@ namespace GiantCropRing
                 {
                     configMenu.AddNumberOption(
                         mod: ModManifest,
-                        getValue: () => (float)property.GetValue(this.config),
+                        getValue: () => (float)(double)property.GetValue(this.config),
                         setValue: value => property.SetValue(this.config, (double)value),
                         name: () => Helper.Translation.Get($"{property.Name}.title"),
                         tooltip: null,
