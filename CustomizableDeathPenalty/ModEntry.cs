@@ -25,6 +25,7 @@ namespace CustomizableDeathPenalty
             this.lastDialogueUp = false;
             this.numberOfSeenDialogues = 0;
             var config = helper.ReadConfig<ModConfig>();
+            Config = config;
 
             PlayerStateManager.SetConfig(config);
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
