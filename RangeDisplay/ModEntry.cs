@@ -138,8 +138,8 @@ namespace RangeDisplay
                 save: () => {
                     this.Helper.WriteConfig(this.config);
                     doConfigHooks();
-                    },
-                titleScreenOnly: true);
+                    }
+                );
 
             foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
             {
