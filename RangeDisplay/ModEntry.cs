@@ -5,9 +5,11 @@ using RangeDisplay.Framework.RangeHandling;
 using RangeDisplay.Framework.RangeHandling.RangeCreators;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
+using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,14 +97,12 @@ namespace RangeDisplay
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
 
-            if (this.config.ShowRangeOfHeldItem || this.config.ShowRangeOfHoveredOverItem)
-            {
-                helper.Events.Input.CursorMoved += this.OnCursorMoved;
-                if (this.config.ShowRangeOfHoveredOverItem)
-                    helper.Events.Input.ButtonReleased += this.OnButtonReleased;
-            }
+            doConfigHooks();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+
+            // Set up GMCM config when game is launched
+            helper.Events.GameLoop.GameLaunched += SetUpConfig;
         }
 
         /*********
@@ -117,6 +117,117 @@ namespace RangeDisplay
             foreach (IModRegistryListener listener in this.modRegistryListeners)
             {
                 listener.ModRegistryReady(this.Helper.ModRegistry);
+            }
+        }
+
+        /// <summary>Raised when the game is launched in order to set up the GMCM config.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void SetUpConfig(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+            {
+                return;
+            }
+
+            // Register with GMCM
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => this.config = new ModConfig(),
+                save: () => {
+                    this.Helper.WriteConfig(this.config);
+                    doConfigHooks();
+                    },
+                titleScreenOnly: true);
+
+            foreach (System.Reflection.PropertyInfo property in typeof(ModConfig).GetProperties())
+            {
+                if (property.PropertyType.Equals(typeof(bool)))
+                {
+                    configMenu.AddBoolOption(
+                        mod: ModManifest,
+                        getValue: () => (bool)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(int)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (int)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(double)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, (double)value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(float)))
+                {
+                    configMenu.AddNumberOption(
+                        mod: ModManifest,
+                        getValue: () => (float)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title"),
+                        tooltip: null,
+                        min: 0f,
+                        max: 1f,
+                        interval: 0.01f
+                       );
+                }
+                if (property.PropertyType.Equals(typeof(KeybindList)))
+                {
+                    configMenu.AddKeybindList(
+                        mod: ModManifest,
+                        getValue: () => (KeybindList)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+                if (property.PropertyType.Equals(typeof(SButton)))
+                {
+                    configMenu.AddKeybind(
+                        mod: ModManifest,
+                        getValue: () => (SButton)property.GetValue(this.config),
+                        setValue: value => property.SetValue(this.config, value),
+                        name: () => Helper.Translation.Get($"{property.Name}.title")
+                        );
+                }
+            }
+        }
+
+        /// <summary>Re-hooks or un-hooks configurable events</summary>
+        ///
+        private void doConfigHooks()
+        {
+            if (this.config.ShowRangeOfHeldItem || this.config.ShowRangeOfHoveredOverItem)
+            {
+                Helper.Events.Input.CursorMoved += this.OnCursorMoved;
+                if (this.config.ShowRangeOfHoveredOverItem)
+                {
+                    Helper.Events.Input.ButtonReleased += this.OnButtonReleased;
+                }
+                else
+                {
+                    Helper.Events.Input.ButtonReleased -= this.OnButtonReleased;
+                }
+            }
+            else
+            {
+                Helper.Events.Input.CursorMoved -= this.OnCursorMoved;
+                Helper.Events.Input.ButtonReleased -= this.OnButtonReleased;
             }
         }
 
