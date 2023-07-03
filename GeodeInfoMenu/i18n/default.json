@@ -1,10 +1,10 @@
 ﻿{
   "ActivationKey.title": "Activation Key",
-  "NumberOfNextGeodeDropsToShow.title": "Number of Next Geode Drops to Show",
-  "ShowStarsNextToMineralsAndArtifactsNotDonatedToTheMuseum.title": "Show Stars Next to Donatable Items",
-  "RememberMenuStateAfterClose.title": "Remember Menu State After Close",
-  "IfRememberingMenuStateAlsoRememberScrollBarPositions.title": "Also Remember Scroll Bar Position",
-  "RightClickOnOnlySearchBoxToClearText.title": "Right Click On Search Box To Clear Text",
-  "PressingEscapeWhileTypingInSearchBoxInstantlyClosesMenu.title": "Pressing Esc While Typing Closes Menu"
+  "NumberOfNextGeodeDropsToShow.title": "# of Geode Drops to Show",
+  "ShowStarsNextToMineralsAndArtifactsNotDonatedToTheMuseum.title": "Stars Next to Donatable Items",
+  "RememberMenuStateAfterClose.title": "Remember Menu State",
+  "IfRememberingMenuStateAlsoRememberScrollBarPositions.title": "Remember Scroll Bar Position",
+  "RightClickOnOnlySearchBoxToClearText.title": "Right Click On Search Box \n To Clear Text",
+  "PressingEscapeWhileTypingInSearchBoxInstantlyClosesMenu.title": "Pressing Esc While Typing \n Closes Menu"
 }
 
