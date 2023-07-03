@@ -80,7 +80,7 @@ namespace BetterHay
                 {
                     configMenu.AddNumberOption(
                         mod: ModManifest,
-                        getValue: () => (float)property.GetValue(Config),
+                        getValue: () => (float)(double)property.GetValue(Config),
                         setValue: value => property.SetValue(Config, (double)value),
                         name: () => Helper.Translation.Get($"{property.Name}.title"),
                         tooltip: null,
